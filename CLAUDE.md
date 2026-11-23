@@ -290,7 +290,7 @@ Un seul quartier très demandé (ex. un arrondissement de Paris ou de Lyon). Obj
 aux chercheurs : 30 à 50 habitants vérifiés recrutés à la main (affiches dans les halls, groupes
 Facebook de quartier, bouche-à-oreille).
 - Réservations (étape 8) : créneaux de 30 min calculés par `available_slots()` (heure de Paris, au moins 2 h à l'avance, sans chevauchement). Création via `create_booking()`, réponse de l'habitant via `respond_booking()`, annulation via `cancel_booking()`, liste via `my_bookings()`. Le contact de l'habitant n'est montré au chercheur qu'une fois la réservation confirmée ; à l'étape 9 ce sera après paiement.
-- Paiements (étape 9) : modèle Stripe « charges et virements séparés ». Le chercheur paie à la demande
+- Paiements (étape 9) : modèle Stripe « charges et virements séparés ». Comptes habitants créés avec l'API Stripe « Accounts v2 » (Stripe refuse désormais la v1 pour les nouvelles intégrations) : tableau de bord Express, configuration `recipient` (capacité `stripe_balance.stripe_transfers`), la plateforme gère frais et pertes. Compte prêt = cette capacité est `active`. Le chercheur paie à la demande
   (Stripe Checkout, page ouverte 30 min ; une demande non payée bloque le créneau 30 min puis est
   annulée). L'habitant ne voit la demande qu'une fois payée. L'argent reste sur le compte de la
   plateforme ; le versement de 80 % (`transfers` avec `source_transaction`) part quand le chercheur
