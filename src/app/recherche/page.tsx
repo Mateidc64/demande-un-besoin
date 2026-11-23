@@ -1,4 +1,5 @@
 // Page /recherche : habitants vérifiés autour d'une adresse (300 m), même immeuble et même rue d'abord.
+// Si on cherche une rue sans numéro, toute la rue est incluse (voir search_residents).
 import Link from "next/link";
 import { Suspense } from "react";
 import { OFFER_TYPES, OFFERS, type OfferType } from "@/lib/offres";
@@ -89,6 +90,8 @@ async function Results({ searchParams }: { searchParams: Promise<Params> }) {
     return true;
   });
 
+  // Sans numéro (juste une rue), on cherche sur toute la rue en plus du rayon de 300 m.
+  const zone = !p.immeuble && p.rue ? `sur « ${p.rue} » ou à moins de 300 m` : "dans un rayon de 300 m";
   const selectClass = "rounded-xl border border-contour px-3 py-2 text-sm";
 
   return (
@@ -131,8 +134,8 @@ async function Results({ searchParams }: { searchParams: Promise<Params> }) {
 
         <p className="text-sm text-ardoise">
           {residents.length === 0
-            ? "Aucun habitant vérifié dans un rayon de 300 m pour l'instant."
-            : `${residents.length} habitant${residents.length > 1 ? "s" : ""} vérifié${residents.length > 1 ? "s" : ""} dans un rayon de 300 m`}
+            ? `Aucun habitant vérifié ${zone} pour l'instant.`
+            : `${residents.length} habitant${residents.length > 1 ? "s" : ""} vérifié${residents.length > 1 ? "s" : ""} ${zone}`}
         </p>
 
         {residents.length === 0 && (
