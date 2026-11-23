@@ -37,16 +37,16 @@ export function HomeSearch() {
             setAddress(a);
             if (a) router.push(searchUrl(a));
           }}
-          inputClass="w-full rounded-lg border border-zinc-300 px-4 py-3 dark:border-zinc-700 dark:bg-zinc-900"
-          placeholder="Quelle adresse vous intéresse ?"
+          inputClass="h-13 w-full rounded-xl border border-contour px-4"
+          placeholder="Ex. 12 rue des Martyrs, Paris"
         />
       </div>
       <button
         type="submit"
         disabled={!address}
-        className="rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
+        className="h-13 rounded-xl bg-action px-6 font-bold text-white hover:bg-action-survol disabled:opacity-60"
       >
-        Chercher
+        Trouver un voisin
       </button>
     </form>
   );

@@ -34,10 +34,10 @@ async function DatabaseStatus() {
   const { ok, message } = await checkDatabase();
   return (
     <>
-      <p className={`mt-6 text-lg font-semibold ${ok ? "text-emerald-600" : "text-red-600"}`}>
+      <p className={`mt-6 text-lg font-semibold ${ok ? "text-verifie" : "text-red-600"}`}>
         {ok ? "✅ Tout fonctionne" : "❌ Pas encore prêt"}
       </p>
-      <p className="mt-2 text-zinc-600 dark:text-zinc-400">{message}</p>
+      <p className="mt-2 text-ardoise">{message}</p>
     </>
   );
 }
@@ -47,7 +47,7 @@ export default function StatutPage() {
     <main className="flex flex-1 flex-col items-center justify-center px-6 py-16">
       <div className="w-full max-w-md text-center">
         <h1 className="text-2xl font-bold">État du site</h1>
-        <Suspense fallback={<p className="mt-6 text-zinc-500">Vérification en cours…</p>}>
+        <Suspense fallback={<p className="mt-6 text-ardoise">Vérification en cours…</p>}>
           <DatabaseStatus />
         </Suspense>
       </div>

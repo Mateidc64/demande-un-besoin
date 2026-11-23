@@ -44,7 +44,7 @@ export function AddressField({
         className={inputClass}
       />
       {suggestions.length > 0 && !value && (
-        <ul className="absolute z-10 mt-1 w-full overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-lg dark:border-zinc-700 dark:bg-zinc-900">
+        <ul className="absolute z-10 mt-1 w-full overflow-hidden rounded-xl border border-brume bg-white shadow-lg">
           {suggestions.map((s) => (
             <li key={s.id}>
               <button
@@ -54,7 +54,7 @@ export function AddressField({
                   setQuery(s.label);
                   setSuggestions([]);
                 }}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                className="w-full px-4 py-2 text-left text-sm hover:bg-brume"
               >
                 {s.label}
               </button>

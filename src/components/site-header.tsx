@@ -1,6 +1,7 @@
 // Barre du haut du site : nom de l'app, « Habitant », « Mes réservations », « Se connecter » / « Mon compte ».
 import Link from "next/link";
 import { Suspense } from "react";
+import { Logo } from "@/components/logo";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -10,21 +11,21 @@ async function AccountLink() {
   const { data } = await supabase.auth.getClaims();
   const loggedIn = Boolean(data?.claims);
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex flex-wrap items-center gap-4">
       {/* « Habitant » : devenir habitant, ou directement l'espace habitant si on est vérifié. */}
-      <Link href="/espace-habitant" className="text-sm font-medium hover:underline">
+      <Link href="/espace-habitant" className="text-sm font-semibold text-nuit hover:underline">
         Habitant
       </Link>
       {loggedIn && (
-        <Link href="/mes-reservations" className="text-sm font-medium hover:underline">
+        <Link href="/mes-reservations" className="text-sm font-semibold text-nuit hover:underline">
           Mes réservations
         </Link>
       )}
       <Link
-      href={loggedIn ? "/compte" : "/connexion"}
-      className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-900"
-    >
-      {loggedIn ? "Mon compte" : "Se connecter"}
+        href={loggedIn ? "/compte" : "/connexion"}
+        className="rounded-xl border-2 border-nuit px-4 py-2 text-sm font-bold text-nuit hover:bg-creme"
+      >
+        {loggedIn ? "Mon compte" : "Se connecter"}
       </Link>
     </div>
   );
@@ -32,9 +33,9 @@ async function AccountLink() {
 
 export function SiteHeader() {
   return (
-    <header className="flex items-center justify-between border-b border-zinc-200 px-6 py-4 dark:border-zinc-800">
-      <Link href="/" className="font-bold">
-        Demande à un voisin
+    <header className="flex flex-wrap items-center justify-between gap-3 border-b border-brume bg-white px-4 py-3 sm:px-6">
+      <Link href="/" aria-label="Demande à un voisin, accueil">
+        <Logo />
       </Link>
       <Suspense fallback={null}>
         <AccountLink />

@@ -25,7 +25,7 @@ async function Content({ searchParams }: { searchParams: Promise<{ stripe?: stri
     return (
       <p>
         Tu dois d&apos;abord{" "}
-        <Link href="/devenir-habitant" className="font-medium text-emerald-700 underline">
+        <Link href="/devenir-habitant" className="font-medium text-lien underline">
           devenir habitant
         </Link>
         .
@@ -58,35 +58,35 @@ async function Content({ searchParams }: { searchParams: Promise<{ stripe?: stri
   return (
     <div className="flex flex-col gap-8">
       {resident.verification_status !== "verifie" && (
-        <p className="rounded-lg bg-amber-50 p-3 text-sm text-amber-800 dark:bg-amber-950 dark:text-amber-200">
+        <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-800">
           Ton domicile n&apos;est pas encore vérifié : tu peux préparer tes offres, elles seront visibles dès la
           validation.
         </p>
       )}
-      <section className="rounded-xl border border-zinc-200 p-5 dark:border-zinc-800">
+      <section className="rounded-2xl border bg-white border-brume p-5">
         <h2 className="mb-1 text-lg font-semibold">Recevoir mes paiements</h2>
         {resident.stripe_ready ? (
-          <p className="text-sm text-emerald-700 dark:text-emerald-300">
+          <p className="text-sm text-verifie">
             ✅ Ton compte bancaire est connecté. Tu reçois 80 % de chaque échange une fois qu&apos;il a eu lieu.
           </p>
         ) : (
           <>
-            <p className="mb-3 text-sm text-zinc-600 dark:text-zinc-400">
+            <p className="mb-3 text-sm text-ardoise">
               Pour être réservé et payé, connecte ton compte bancaire. Le formulaire est géré par Stripe, notre
               prestataire de paiement : nous ne voyons jamais ton IBAN.
             </p>
             {stripe === "erreur" && (
-              <p className="mb-3 rounded-lg bg-red-50 p-3 text-sm text-red-700 dark:bg-red-950 dark:text-red-300">
+              <p className="mb-3 rounded-xl bg-red-50 p-3 text-sm text-red-700">
                 La connexion à Stripe a échoué. Message de Stripe : « {detail ?? "inconnu"} »
               </p>
             )}
             {stripe === "incomplet" && (
-              <p className="mb-3 rounded-lg bg-amber-50 p-3 text-sm text-amber-800 dark:bg-amber-950 dark:text-amber-200">
+              <p className="mb-3 rounded-xl bg-amber-50 p-3 text-sm text-amber-800">
                 Il manque encore des informations chez Stripe. Clique à nouveau pour terminer.
               </p>
             )}
             <form action={connectStripe}>
-              <button className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700">
+              <button className="rounded-xl bg-action px-4 py-2 text-sm font-semibold text-white hover:bg-action-survol">
                 {resident.stripe_account_id ? "Terminer la connexion" : "Connecter mon compte bancaire"}
               </button>
             </form>
@@ -95,14 +95,14 @@ async function Content({ searchParams }: { searchParams: Promise<{ stripe?: stri
       </section>
       <section>
         <h2 className="mb-1 text-lg font-semibold">Mes offres</h2>
-        <p className="mb-4 text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="mb-4 text-sm text-ardoise">
           Active les formats que tu proposes et choisis ton prix. La plateforme garde 20 %.
         </p>
         <OffersForm existing={existingOffers} />
       </section>
       <section>
         <h2 className="mb-1 text-lg font-semibold">Mes disponibilités</h2>
-        <p className="mb-4 text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="mb-4 text-sm text-ardoise">
           Les créneaux où tu peux faire un appel, une balade ou une visite du soir, chaque semaine.
         </p>
         <AvailabilityForm existing={existingSlots} />
@@ -116,12 +116,12 @@ export default function MesOffresPage({ searchParams }: PageProps<"/mes-offres">
     <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-12">
       <h1 className="mb-2 text-2xl font-bold">Espace habitant</h1>
       <nav className="mb-8 flex flex-wrap gap-4 text-sm">
-        <span className="font-semibold text-emerald-700">Offres, créneaux et paiements</span>
-        <Link href="/mes-reservations" className="text-zinc-600 underline hover:text-zinc-900 dark:text-zinc-400">
+        <span className="font-semibold text-verifie">Offres, créneaux et paiements</span>
+        <Link href="/mes-reservations" className="text-ardoise underline hover:text-encre">
           Demandes reçues et gains
         </Link>
       </nav>
-      <Suspense fallback={<p className="text-zinc-500">Chargement…</p>}>
+      <Suspense fallback={<p className="text-ardoise">Chargement…</p>}>
         <Content searchParams={searchParams as Promise<{ stripe?: string; detail?: string }>} />
       </Suspense>
     </main>

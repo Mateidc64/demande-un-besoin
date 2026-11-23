@@ -26,9 +26,9 @@ async function Content() {
 
   if (!user) {
     return (
-      <div className="rounded-xl border border-zinc-200 p-6 dark:border-zinc-800">
+      <div className="rounded-2xl border bg-white border-brume p-6">
         <p className="mb-4">Pour devenir habitant, connecte-toi ou crée un compte d&apos;abord.</p>
-        <Link href="/connexion" className="rounded-lg bg-emerald-600 px-5 py-2.5 font-semibold text-white">
+        <Link href="/connexion" className="rounded-xl bg-action px-5 py-2.5 font-semibold text-white">
           Se connecter
         </Link>
       </div>
@@ -44,15 +44,15 @@ async function Content() {
   if (resident) {
     const status = STATUS_TEXT[resident.verification_status as keyof typeof STATUS_TEXT];
     return (
-      <div className="rounded-xl border border-zinc-200 p-6 dark:border-zinc-800">
+      <div className="rounded-2xl border bg-white border-brume p-6">
         <h2 className="mb-2 text-lg font-semibold">{status.title}</h2>
-        <p className="text-zinc-600 dark:text-zinc-400">{status.text}</p>
-        <p className="mt-4 text-sm text-zinc-500">
+        <p className="text-ardoise">{status.text}</p>
+        <p className="mt-4 text-sm text-ardoise">
           Adresse déclarée : {resident.street_name}, {resident.city}
         </p>
         <Link
           href="/mes-offres"
-          className="mt-4 inline-block rounded-lg bg-emerald-600 px-5 py-2.5 font-semibold text-white hover:bg-emerald-700"
+          className="mt-4 inline-block rounded-xl bg-action px-5 py-2.5 font-semibold text-white hover:bg-action-survol"
         >
           Mes offres et disponibilités
         </Link>
@@ -68,10 +68,10 @@ export default function DevenirHabitantPage() {
   return (
     <main className="mx-auto w-full max-w-xl flex-1 px-6 py-12">
       <h1 className="mb-2 text-2xl font-bold">Devenir habitant</h1>
-      <p className="mb-8 text-zinc-600 dark:text-zinc-400">
+      <p className="mb-8 text-ardoise">
         Partage ce que tu sais de ton quartier et sois rémunéré pour chaque échange.
       </p>
-      <Suspense fallback={<p className="text-zinc-500">Chargement…</p>}>
+      <Suspense fallback={<p className="text-ardoise">Chargement…</p>}>
         <Content />
       </Suspense>
     </main>

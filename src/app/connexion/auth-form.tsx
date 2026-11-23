@@ -5,9 +5,9 @@ import { useActionState, useState } from "react";
 import { signIn, signInWithGoogle, signUp, type FormState } from "./actions";
 
 const inputClass =
-  "w-full rounded-lg border border-zinc-300 px-4 py-3 dark:border-zinc-700 dark:bg-zinc-900";
+  "w-full rounded-xl border border-contour px-4 py-3";
 const buttonClass =
-  "w-full rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white hover:bg-emerald-700 disabled:opacity-60";
+  "w-full rounded-xl bg-action px-6 py-3 font-semibold text-white hover:bg-action-survol disabled:opacity-60";
 
 export function AuthForm({ initialError }: { initialError?: string }) {
   const [mode, setMode] = useState<"connexion" | "inscription">("connexion");
@@ -19,13 +19,13 @@ export function AuthForm({ initialError }: { initialError?: string }) {
 
   return (
     <div className="w-full max-w-sm">
-      <div className="mb-6 grid grid-cols-2 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
+      <div className="mb-6 grid grid-cols-2 rounded-xl bg-brume p-1">
         {(["connexion", "inscription"] as const).map((m) => (
           <button
             key={m}
             type="button"
             onClick={() => setMode(m)}
-            className={`rounded-md py-2 font-medium ${mode === m ? "bg-white shadow dark:bg-zinc-900" : "text-zinc-500"}`}
+            className={`rounded-md py-2 font-medium ${mode === m ? "bg-white shadow" : "text-ardoise"}`}
           >
             {m === "connexion" ? "Se connecter" : "Créer un compte"}
           </button>
@@ -35,13 +35,13 @@ export function AuthForm({ initialError }: { initialError?: string }) {
       <form action={signInWithGoogle}>
         <button
           type="submit"
-          className="w-full rounded-lg border border-zinc-300 px-6 py-3 font-semibold hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-900"
+          className="w-full rounded-xl border border-contour px-6 py-3 font-semibold hover:bg-creme"
         >
           Continuer avec Google
         </button>
       </form>
 
-      <p className="my-4 text-center text-sm text-zinc-500">ou avec ton e-mail</p>
+      <p className="my-4 text-center text-sm text-ardoise">ou avec ton e-mail</p>
 
       {mode === "connexion" ? (
         <form action={signInAction} className="flex flex-col gap-3">
@@ -77,9 +77,9 @@ export function AuthForm({ initialError }: { initialError?: string }) {
         </form>
       )}
 
-      {error && <p className="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-700 dark:bg-red-950 dark:text-red-300">{error}</p>}
+      {error && <p className="mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</p>}
       {state.message && (
-        <p className="mt-4 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+        <p className="mt-4 rounded-xl bg-verifie-pale p-3 text-sm text-verifie">
           {state.message}
         </p>
       )}

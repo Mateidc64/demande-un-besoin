@@ -49,7 +49,7 @@ async function Results({ searchParams }: { searchParams: Promise<Params> }) {
     return (
       <p>
         Aucune adresse choisie.{" "}
-        <Link href="/" className="text-emerald-700 underline">
+        <Link href="/" className="text-lien underline">
           Faire une recherche
         </Link>
       </p>
@@ -89,7 +89,7 @@ async function Results({ searchParams }: { searchParams: Promise<Params> }) {
     return true;
   });
 
-  const selectClass = "rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900";
+  const selectClass = "rounded-xl border border-contour px-3 py-2 text-sm";
 
   return (
     <div className="grid gap-6 md:grid-cols-[1fr_1.2fr]">
@@ -124,21 +124,21 @@ async function Results({ searchParams }: { searchParams: Promise<Params> }) {
             <option value="4">4 ★ et plus</option>
             <option value="4.5">4,5 ★ et plus</option>
           </select>
-          <button className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium dark:border-zinc-700">
+          <button className="rounded-xl border border-contour px-4 py-2 text-sm font-medium">
             Filtrer
           </button>
         </form>
 
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="text-sm text-ardoise">
           {residents.length === 0
             ? "Aucun habitant vérifié dans un rayon de 300 m pour l'instant."
             : `${residents.length} habitant${residents.length > 1 ? "s" : ""} vérifié${residents.length > 1 ? "s" : ""} dans un rayon de 300 m`}
         </p>
 
         {residents.length === 0 && (
-          <div className="rounded-xl border border-zinc-200 p-6 text-sm dark:border-zinc-800">
+          <div className="rounded-2xl border bg-white border-brume p-6 text-sm">
             Nous lançons le service quartier par quartier. Tu habites près d&apos;ici ?{" "}
-            <Link href="/devenir-habitant" className="font-medium text-emerald-700 underline">
+            <Link href="/devenir-habitant" className="font-medium text-lien underline">
               Deviens habitant
             </Link>
             .
@@ -150,13 +150,13 @@ async function Results({ searchParams }: { searchParams: Promise<Params> }) {
             const offers = (offersByResident.get(r.resident_id) ?? []).sort((a, b) => a.price_cents - b.price_cents);
             const years = r.move_in_year ? new Date().getFullYear() - r.move_in_year : null;
             return (
-              <li key={r.resident_id} className="rounded-xl border border-zinc-200 p-5 dark:border-zinc-800">
+              <li key={r.resident_id} className="rounded-2xl border bg-white border-brume p-5">
                 <div className="flex gap-4">
                   {r.avatar_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={r.avatar_url} alt="" className="h-14 w-14 rounded-full object-cover" />
                   ) : (
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-xl font-bold text-emerald-700">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-peche text-xl font-bold text-nuit">
                       {r.first_name?.[0]?.toUpperCase() ?? "?"}
                     </div>
                   )}
@@ -164,36 +164,36 @@ async function Results({ searchParams }: { searchParams: Promise<Params> }) {
                     <Link href={`/habitant/${r.resident_id}`} className="font-semibold hover:underline">
                       {r.first_name}
                     </Link>
-                    <p className="text-sm text-emerald-700">{proximityLabel(r)}</p>
-                    <p className="text-sm text-zinc-500">
+                    <p className="text-sm text-verifie">{proximityLabel(r)}</p>
+                    <p className="text-sm text-ardoise">
                       {years !== null && (years <= 0 ? "Habitant depuis moins d'un an" : `Habitant depuis ${years} an${years > 1 ? "s" : ""}`)}
                       {r.review_count > 0 ? ` · ★ ${r.average_rating} (${r.review_count} avis)` : " · Nouveau"}
                     </p>
                   </div>
                 </div>
                 <div className="mt-3 flex flex-wrap gap-2 text-xs">
-                  <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200">
+                  <span className="rounded-full bg-verifie-pale px-2.5 py-1 text-verifie">
                     ✓ Domicile vérifié
                   </span>
                   {years !== null && years >= 5 && (
-                    <span className="rounded-full bg-zinc-100 px-2.5 py-1 dark:bg-zinc-800">Habitant depuis 5 ans ou plus</span>
+                    <span className="rounded-full bg-brume px-2.5 py-1">Habitant depuis 5 ans ou plus</span>
                   )}
                   {r.review_count >= 3 && (r.average_rating ?? 0) >= 4.5 && (
-                    <span className="rounded-full bg-amber-50 px-2.5 py-1 text-amber-800 dark:bg-amber-950 dark:text-amber-200">
+                    <span className="rounded-full bg-amber-50 px-2.5 py-1 text-amber-800">
                       ★ Très bien noté
                     </span>
                   )}
                 </div>
                 <ul className="mt-3 flex flex-wrap gap-2 text-sm">
                   {offers.map((o) => (
-                    <li key={o.type} className="rounded-lg border border-zinc-200 px-3 py-1.5 dark:border-zinc-700">
+                    <li key={o.type} className="rounded-xl border border-brume px-3 py-1.5">
                       {OFFERS[o.type].label} · <strong>{o.price_cents / 100} €</strong>
                     </li>
                   ))}
                 </ul>
                 <Link
                   href={`/habitant/${r.resident_id}`}
-                  className="mt-3 inline-block text-sm font-medium text-emerald-700 underline"
+                  className="mt-3 inline-block text-sm font-medium text-lien underline"
                 >
                   Voir le profil et réserver
                 </Link>
@@ -208,7 +208,7 @@ async function Results({ searchParams }: { searchParams: Promise<Params> }) {
 
 async function Title({ searchParams }: { searchParams: Promise<Params> }) {
   const { adresse } = await searchParams;
-  return <p className="mb-6 text-zinc-600 dark:text-zinc-400">{adresse ?? ""}</p>;
+  return <p className="mb-6 text-ardoise">{adresse ?? ""}</p>;
 }
 
 export default function RecherchePage({ searchParams }: PageProps<"/recherche">) {
@@ -219,7 +219,7 @@ export default function RecherchePage({ searchParams }: PageProps<"/recherche">)
       <Suspense fallback={null}>
         <Title searchParams={params} />
       </Suspense>
-      <Suspense fallback={<p className="text-zinc-500">Recherche en cours…</p>}>
+      <Suspense fallback={<p className="text-ardoise">Recherche en cours…</p>}>
         <Results searchParams={params} />
       </Suspense>
     </main>

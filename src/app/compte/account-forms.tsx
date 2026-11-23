@@ -5,13 +5,13 @@ import { useActionState } from "react";
 import { deleteAccount, updatePassword, updateProfile, type FormState } from "./actions";
 
 const inputClass =
-  "w-full rounded-lg border border-zinc-300 px-4 py-2.5 dark:border-zinc-700 dark:bg-zinc-900";
+  "w-full rounded-xl border border-contour px-4 py-2.5";
 const buttonClass =
-  "rounded-lg bg-emerald-600 px-5 py-2.5 font-semibold text-white hover:bg-emerald-700 disabled:opacity-60";
+  "rounded-xl bg-action px-5 py-2.5 font-semibold text-white hover:bg-action-survol disabled:opacity-60";
 
 function Feedback({ state }: { state: FormState }) {
   if (state.error) return <p className="text-sm text-red-600">{state.error}</p>;
-  if (state.message) return <p className="text-sm text-emerald-700">{state.message}</p>;
+  if (state.message) return <p className="text-sm text-verifie">{state.message}</p>;
   return null;
 }
 
@@ -73,7 +73,7 @@ export function DeleteAccountForm() {
   const [state, action, pending] = useActionState<FormState, FormData>(deleteAccount, {});
   return (
     <form action={action} className="flex flex-col gap-3">
-      <p className="text-sm text-zinc-600 dark:text-zinc-400">
+      <p className="text-sm text-ardoise">
         Ton compte et toutes tes informations seront effacés définitivement. Pour confirmer, écris{" "}
         <strong>SUPPRIMER</strong> ci-dessous.
       </p>
@@ -82,7 +82,7 @@ export function DeleteAccountForm() {
         <button
           type="submit"
           disabled={pending}
-          className="rounded-lg bg-red-600 px-5 py-2.5 font-semibold text-white hover:bg-red-700 disabled:opacity-60"
+          className="rounded-xl bg-red-600 px-5 py-2.5 font-semibold text-white hover:bg-red-700 disabled:opacity-60"
         >
           {pending ? "Suppression…" : "Supprimer mon compte"}
         </button>

@@ -27,7 +27,7 @@ async function Check({ searchParams }: { searchParams: Promise<{ session_id?: st
 export default function PaiementRetourPage({ searchParams }: PageProps<"/paiement/retour">) {
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-12">
-      <Suspense fallback={<p className="text-zinc-500">Vérification du paiement…</p>}>
+      <Suspense fallback={<p className="text-ardoise">Vérification du paiement…</p>}>
         <Check searchParams={searchParams as Promise<{ session_id?: string }>} />
       </Suspense>
     </main>

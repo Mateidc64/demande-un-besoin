@@ -50,14 +50,14 @@ async function Profile({ params }: { params: Promise<{ id: string }> }) {
           // eslint-disable-next-line @next/next/no-img-element
           <img src={profile.avatar_url} alt="" className="h-24 w-24 rounded-full object-cover" />
         ) : (
-          <div className="flex h-24 w-24 items-center justify-center rounded-full bg-emerald-100 text-4xl font-bold text-emerald-700">
+          <div className="flex h-24 w-24 items-center justify-center rounded-full bg-peche text-4xl font-bold text-nuit">
             {profile.first_name?.[0]?.toUpperCase() ?? "?"}
           </div>
         )}
         <div>
           <h1 className="text-2xl font-bold">{profile.first_name}</h1>
-          <p className="text-zinc-600 dark:text-zinc-400">{place}</p>
-          <p className="text-sm text-zinc-500">
+          <p className="text-ardoise">{place}</p>
+          <p className="text-sm text-ardoise">
             {years !== null && (years <= 0 ? "Habitant depuis moins d'un an" : `Habitant depuis ${years} an${years > 1 ? "s" : ""}`)}
             {profile.housing_type ? ` · ${profile.housing_type}` : ""}
             {profile.review_count > 0 ? ` · ★ ${profile.average_rating} (${profile.review_count} avis)` : " · Nouveau"}
@@ -66,14 +66,14 @@ async function Profile({ params }: { params: Promise<{ id: string }> }) {
       </header>
 
       <div className="flex flex-wrap gap-2 text-xs">
-        <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200">
+        <span className="rounded-full bg-verifie-pale px-2.5 py-1 text-verifie">
           ✓ Domicile vérifié
         </span>
         {years !== null && years >= 5 && (
-          <span className="rounded-full bg-zinc-100 px-2.5 py-1 dark:bg-zinc-800">Habitant depuis 5 ans ou plus</span>
+          <span className="rounded-full bg-brume px-2.5 py-1">Habitant depuis 5 ans ou plus</span>
         )}
         {profile.review_count >= 3 && (profile.average_rating ?? 0) >= 4.5 && (
-          <span className="rounded-full bg-amber-50 px-2.5 py-1 text-amber-800 dark:bg-amber-950 dark:text-amber-200">
+          <span className="rounded-full bg-amber-50 px-2.5 py-1 text-amber-800">
             ★ Très bien noté
           </span>
         )}
@@ -84,7 +84,7 @@ async function Profile({ params }: { params: Promise<{ id: string }> }) {
       <section>
         <h2 className="mb-3 text-lg font-semibold">Ce que {profile.first_name} propose</h2>
         {(offers ?? []).length === 0 ? (
-          <p className="text-sm text-zinc-500">Aucune offre pour le moment.</p>
+          <p className="text-sm text-ardoise">Aucune offre pour le moment.</p>
         ) : (
           <ul className="flex flex-col gap-3">
             {(offers ?? []).map((o) => {
@@ -92,17 +92,17 @@ async function Profile({ params }: { params: Promise<{ id: string }> }) {
               return (
                 <li
                   key={o.type}
-                  className="flex items-center justify-between gap-4 rounded-xl border border-zinc-200 p-4 dark:border-zinc-800"
+                  className="flex items-center justify-between gap-4 rounded-2xl border bg-white border-brume p-4"
                 >
                   <div>
                     <p className="font-semibold">{offer.label}</p>
-                    <p className="text-sm text-zinc-600 dark:text-zinc-400">{offer.description}</p>
+                    <p className="text-sm text-ardoise">{offer.description}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-lg font-bold">{o.price_cents / 100} €</p>
                     <Link
                       href={`/reserver/${o.id}`}
-                      className="mt-1 inline-block rounded-lg bg-emerald-600 px-4 py-1.5 text-sm font-semibold text-white hover:bg-emerald-700"
+                      className="mt-1 inline-block rounded-xl bg-action px-4 py-1.5 text-sm font-semibold text-white hover:bg-action-survol"
                     >
                       Réserver
                     </Link>
@@ -112,7 +112,7 @@ async function Profile({ params }: { params: Promise<{ id: string }> }) {
             })}
           </ul>
         )}
-        <p className="mt-2 text-xs text-zinc-500">
+        <p className="mt-2 text-xs text-ardoise">
           Le paiement est bloqué jusqu&apos;à la fin de l&apos;échange. {profile.first_name} reçoit 80 % du prix
           {offers?.[0] ? ` (ex. ${residentShare(offers[0].price_cents / 100)} € sur ${offers[0].price_cents / 100} €)` : ""}.
         </p>
@@ -135,15 +135,15 @@ async function Profile({ params }: { params: Promise<{ id: string }> }) {
       <section>
         <h2 className="mb-3 text-lg font-semibold">Avis reçus</h2>
         {((reviews ?? []) as Review[]).length === 0 ? (
-          <p className="text-sm text-zinc-500">Pas encore d&apos;avis.</p>
+          <p className="text-sm text-ardoise">Pas encore d&apos;avis.</p>
         ) : (
           <ul className="flex flex-col gap-4">
             {((reviews ?? []) as Review[]).map((r, i) => (
-              <li key={i} className="border-b border-zinc-200 pb-4 dark:border-zinc-800">
+              <li key={i} className="border-b border-brume pb-4">
                 <p className="text-sm">
-                  <span className="text-amber-500">{"★".repeat(r.rating)}</span>
-                  <span className="text-zinc-300">{"★".repeat(5 - r.rating)}</span> · {r.author_first_name} ·{" "}
-                  <span className="text-zinc-500">{new Date(r.created_at).toLocaleDateString("fr-FR")}</span>
+                  <span className="text-etoile">{"★".repeat(r.rating)}</span>
+                  <span className="text-contour">{"★".repeat(5 - r.rating)}</span> · {r.author_first_name} ·{" "}
+                  <span className="text-ardoise">{new Date(r.created_at).toLocaleDateString("fr-FR")}</span>
                 </p>
                 {r.comment && <p className="mt-1 text-sm">{r.comment}</p>}
               </li>
@@ -160,7 +160,7 @@ async function Profile({ params }: { params: Promise<{ id: string }> }) {
 export default function HabitantPage({ params }: PageProps<"/habitant/[id]">) {
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-12">
-      <Suspense fallback={<p className="text-zinc-500">Chargement…</p>}>
+      <Suspense fallback={<p className="text-ardoise">Chargement…</p>}>
         <Profile params={params} />
       </Suspense>
     </main>

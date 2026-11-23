@@ -11,14 +11,14 @@ export default function SearchMap({ lat, lng, radius }: { lat: number; lng: numb
       center={[lat, lng]}
       zoom={16}
       scrollWheelZoom={false}
-      className="h-64 w-full rounded-xl md:h-full md:min-h-96"
+      className="h-64 w-full rounded-2xl md:h-full md:min-h-96"
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <Circle center={[lat, lng]} radius={radius} pathOptions={{ color: "#059669", fillOpacity: 0.08 }} />
-      <CircleMarker center={[lat, lng]} radius={8} pathOptions={{ color: "#fff", fillColor: "#059669", fillOpacity: 1 }}>
+      <Circle center={[lat, lng]} radius={radius} pathOptions={{ color: "#F26A21", fillOpacity: 0.1 }} />
+      <CircleMarker center={[lat, lng]} radius={8} pathOptions={{ color: "#fff", fillColor: "#15364F", fillOpacity: 1 }}>
         <Tooltip>L&apos;adresse recherchée</Tooltip>
       </CircleMarker>
     </MapContainer>

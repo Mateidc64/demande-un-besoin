@@ -1,26 +1,60 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+  Charte graphique « Demande à un voisin » (voir le Google Doc « Charte graphique »).
+  Chaque couleur ci-dessous devient une classe Tailwind : --color-nuit → bg-nuit, text-nuit, border-nuit…
+*/
+@theme {
+  --color-nuit: #15364f; /* bleu nuit : titres, confiance */
+  --color-voisin: #f26a21; /* orange voisin : logo, icônes, contour des champs actifs */
+  --color-voisin-pale: #fff1e6; /* orange pâle : encadrés mis en avant */
+  --color-action: #c94a0a; /* orange action : fond du bouton principal (texte blanc) */
+  --color-action-survol: #a63c06; /* bouton principal au survol */
+  --color-verifie: #1e7a4f; /* vert vérifié : badge « Domicile vérifié », succès */
+  --color-verifie-pale: #e6f4ec;
+  --color-lien: #2a6f97; /* liens dans le texte */
+  --color-encre: #1b2733; /* texte courant */
+  --color-ardoise: #556372; /* texte secondaire */
+  --color-brume: #e3e8ed; /* bordures, séparateurs */
+  --color-contour: #c9d3dc; /* contour des champs au repos */
+  --color-creme: #fbf7f2; /* fond des pages */
+  --color-peche: #ffc79e; /* fond des photos de profil sans photo */
+  --color-etoile: #f5b000; /* étoiles des notes */
+
+  --font-sans: var(--font-jakarta), system-ui, sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* La charte est claire : on désactive le mode sombre automatique. */
+@custom-variant dark (&:where(.dark, .dark *));
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    background: var(--color-creme);
+    color: var(--color-encre);
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  h1,
+  h2,
+  h3 {
+    color: var(--color-nuit);
+  }
+
+  /* Champs de saisie : fond blanc, contour orange quand on écrit dedans. */
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    background-color: #ffffff;
+  }
+
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid var(--color-voisin);
+    outline-offset: 1px;
+  }
+
+  input[type="checkbox"],
+  input[type="radio"] {
+    accent-color: var(--color-action);
+  }
 }

@@ -22,7 +22,7 @@ export function OffersForm({ existing }: { existing: ExistingOffer[] }) {
         const current = existing.find((o) => o.type === type);
         const price = Number(prices[type].replace(",", "."));
         return (
-          <div key={type} className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
+          <div key={type} className="rounded-xl border border-brume p-4">
             <label className="flex items-start gap-3">
               <input
                 type="checkbox"
@@ -32,7 +32,7 @@ export function OffersForm({ existing }: { existing: ExistingOffer[] }) {
               />
               <span>
                 <span className="font-semibold">{offer.label}</span>
-                <span className="block text-sm text-zinc-600 dark:text-zinc-400">{offer.description}</span>
+                <span className="block text-sm text-ardoise">{offer.description}</span>
               </span>
             </label>
             <div className="mt-3 flex flex-wrap items-center gap-3 pl-7 text-sm">
@@ -46,11 +46,11 @@ export function OffersForm({ existing }: { existing: ExistingOffer[] }) {
                   step="1"
                   value={prices[type]}
                   onChange={(e) => setPrices({ ...prices, [type]: e.target.value })}
-                  className="w-20 rounded-lg border border-zinc-300 px-2 py-1.5 dark:border-zinc-700 dark:bg-zinc-900"
+                  className="w-20 rounded-xl border border-contour px-2 py-1.5"
                 />
                 €
               </label>
-              <span className="text-zinc-500">
+              <span className="text-ardoise">
                 entre {offer.minPrice} et {offer.maxPrice} € · tu reçois{" "}
                 <strong>{Number.isFinite(price) ? residentShare(price).toLocaleString("fr-FR") : "–"} €</strong> (80 %)
               </span>
@@ -62,12 +62,12 @@ export function OffersForm({ existing }: { existing: ExistingOffer[] }) {
         <button
           type="submit"
           disabled={pending}
-          className="rounded-lg bg-emerald-600 px-5 py-2.5 font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
+          className="rounded-xl bg-action px-5 py-2.5 font-semibold text-white hover:bg-action-survol disabled:opacity-60"
         >
           {pending ? "Enregistrement…" : "Enregistrer mes offres"}
         </button>
         {state.error && <p className="text-sm text-red-600">{state.error}</p>}
-        {state.message && <p className="text-sm text-emerald-700">{state.message}</p>}
+        {state.message && <p className="text-sm text-verifie">{state.message}</p>}
       </div>
     </form>
   );

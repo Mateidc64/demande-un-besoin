@@ -5,7 +5,7 @@ import { useState, useTransition } from "react";
 import { WEEKDAYS } from "@/lib/offres";
 import { saveAvailabilities, type SaveState, type Slot } from "./actions";
 
-const fieldClass = "rounded-lg border border-zinc-300 px-2 py-1.5 text-sm dark:border-zinc-700 dark:bg-zinc-900";
+const fieldClass = "rounded-xl border border-contour px-2 py-1.5 text-sm";
 
 export function AvailabilityForm({ existing }: { existing: Slot[] }) {
   const [slots, setSlots] = useState<Slot[]>(existing);
@@ -18,7 +18,7 @@ export function AvailabilityForm({ existing }: { existing: Slot[] }) {
 
   return (
     <div className="flex flex-col gap-3">
-      {slots.length === 0 && <p className="text-sm text-zinc-500">Aucun créneau pour l&apos;instant.</p>}
+      {slots.length === 0 && <p className="text-sm text-ardoise">Aucun créneau pour l&apos;instant.</p>}
       {slots.map((slot, i) => (
         <div key={i} className="flex flex-wrap items-center gap-2">
           <select
@@ -48,7 +48,7 @@ export function AvailabilityForm({ existing }: { existing: Slot[] }) {
       <button
         type="button"
         onClick={() => setSlots([...slots, { weekday: 2, start: "18:30", end: "21:00" }])}
-        className="self-start text-sm font-medium text-emerald-700 underline"
+        className="self-start text-sm font-medium text-lien underline"
       >
         + Ajouter un créneau
       </button>
@@ -57,12 +57,12 @@ export function AvailabilityForm({ existing }: { existing: Slot[] }) {
           type="button"
           disabled={pending}
           onClick={() => startTransition(async () => setState(await saveAvailabilities(slots)))}
-          className="rounded-lg bg-emerald-600 px-5 py-2.5 font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
+          className="rounded-xl bg-action px-5 py-2.5 font-semibold text-white hover:bg-action-survol disabled:opacity-60"
         >
           {pending ? "Enregistrement…" : "Enregistrer mes disponibilités"}
         </button>
         {state.error && <p className="text-sm text-red-600">{state.error}</p>}
-        {state.message && <p className="text-sm text-emerald-700">{state.message}</p>}
+        {state.message && <p className="text-sm text-verifie">{state.message}</p>}
       </div>
     </div>
   );

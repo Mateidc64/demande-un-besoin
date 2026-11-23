@@ -28,7 +28,7 @@ export function BookingForm({
   const [day, setDay] = useState(days[0]?.[0] ?? "");
   const [slot, setSlot] = useState("");
 
-  const fieldClass = "w-full rounded-lg border border-zinc-300 px-4 py-2.5 dark:border-zinc-700 dark:bg-zinc-900";
+  const fieldClass = "w-full rounded-xl border border-contour px-4 py-2.5";
 
   return (
     <form action={action} className="flex flex-col gap-6">
@@ -39,7 +39,7 @@ export function BookingForm({
         <section>
           <h2 className="mb-2 font-semibold">1. Choisis un créneau</h2>
           {days.length === 0 ? (
-            <p className="text-sm text-zinc-500">Aucun créneau libre dans les 14 prochains jours.</p>
+            <p className="text-sm text-ardoise">Aucun créneau libre dans les 14 prochains jours.</p>
           ) : (
             <>
               <div className="mb-3 flex flex-wrap gap-2">
@@ -51,7 +51,7 @@ export function BookingForm({
                       setDay(d);
                       setSlot("");
                     }}
-                    className={`rounded-lg border px-3 py-1.5 text-sm capitalize ${d === day ? "border-emerald-600 bg-emerald-50 font-semibold dark:bg-emerald-950" : "border-zinc-300 dark:border-zinc-700"}`}
+                    className={`rounded-xl border px-3 py-1.5 text-sm capitalize ${d === day ? "border-action bg-voisin-pale font-semibold" : "border-contour"}`}
                   >
                     {d}
                   </button>
@@ -63,7 +63,7 @@ export function BookingForm({
                     key={s}
                     type="button"
                     onClick={() => setSlot(s)}
-                    className={`rounded-lg border px-3 py-1.5 text-sm ${s === slot ? "border-emerald-600 bg-emerald-600 font-semibold text-white" : "border-zinc-300 dark:border-zinc-700"}`}
+                    className={`rounded-xl border px-3 py-1.5 text-sm ${s === slot ? "border-action bg-action font-semibold text-white" : "border-contour"}`}
                   >
                     {formatTime(s)}
                   </button>
@@ -98,16 +98,16 @@ export function BookingForm({
         />
       </section>
 
-      {state.error && <p className="rounded-lg bg-red-50 p-3 text-sm text-red-700 dark:bg-red-950 dark:text-red-300">{state.error}</p>}
+      {state.error && <p className="rounded-xl bg-red-50 p-3 text-sm text-red-700">{state.error}</p>}
 
       <button
         type="submit"
         disabled={pending || (!isWritten && !slot)}
-        className="rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
+        className="rounded-xl bg-action px-6 py-3 font-semibold text-white hover:bg-action-survol disabled:opacity-50"
       >
         {pending ? "Ouverture du paiement…" : "Continuer vers le paiement"}
       </button>
-      <p className="text-xs text-zinc-500">
+      <p className="text-xs text-ardoise">
         Paiement sécurisé par carte avec Stripe. L&apos;habitant accepte ou refuse ensuite ta demande : s&apos;il
         refuse, tu es remboursé en totalité. Annulation gratuite jusqu&apos;à 24 h avant le créneau.
       </p>
