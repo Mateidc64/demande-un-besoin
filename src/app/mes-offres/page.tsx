@@ -9,8 +9,8 @@ import { AvailabilityForm } from "./availability-form";
 import { OffersForm, type ExistingOffer } from "./offers-form";
 import { connectStripe } from "./stripe-actions";
 
-async function Content({ searchParams }: { searchParams: Promise<{ stripe?: string }> }) {
-  const { stripe } = await searchParams;
+async function Content({ searchParams }: { searchParams: Promise<{ stripe?: string; detail?: string }> }) {
+  const { stripe, detail } = await searchParams;
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect("/connexion");
@@ -75,6 +75,11 @@ async function Content({ searchParams }: { searchParams: Promise<{ stripe?: stri
               Pour être réservé et payé, connecte ton compte bancaire. Le formulaire est géré par Stripe, notre
               prestataire de paiement : nous ne voyons jamais ton IBAN.
             </p>
+            {stripe === "erreur" && (
+              <p className="mb-3 rounded-lg bg-red-50 p-3 text-sm text-red-700 dark:bg-red-950 dark:text-red-300">
+                La connexion à Stripe a échoué. Message de Stripe : « {detail ?? "inconnu"} »
+              </p>
+            )}
             {stripe === "incomplet" && (
               <p className="mb-3 rounded-lg bg-amber-50 p-3 text-sm text-amber-800 dark:bg-amber-950 dark:text-amber-200">
                 Il manque encore des informations chez Stripe. Clique à nouveau pour terminer.
@@ -111,7 +116,7 @@ export default function MesOffresPage({ searchParams }: PageProps<"/mes-offres">
     <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-12">
       <h1 className="mb-8 text-2xl font-bold">Mes offres et disponibilités</h1>
       <Suspense fallback={<p className="text-zinc-500">Chargement…</p>}>
-        <Content searchParams={searchParams as Promise<{ stripe?: string }>} />
+        <Content searchParams={searchParams as Promise<{ stripe?: string; detail?: string }>} />
       </Suspense>
     </main>
   );
