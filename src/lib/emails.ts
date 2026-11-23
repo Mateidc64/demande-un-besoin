@@ -44,13 +44,13 @@ function escapeHtml(text: string | null | undefined) {
   return (text ?? "").replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 }
 
-function layout(title: string, body: string) {
+function layout(title: string, body: string, cta = { href: "/mes-reservations", label: "Voir mes réservations" }) {
   return `<div style="font-family:Arial,sans-serif;background:#fbf7f2;padding:24px;color:#1b2733">
   <div style="max-width:560px;margin:auto;background:#ffffff;border-radius:16px;padding:24px">
     <p style="color:#f26a21;font-weight:bold;margin:0 0 16px">Demande à un voisin</p>
     <h1 style="color:#15364f;font-size:20px;margin:0 0 16px">${title}</h1>
     ${body}
-    <p style="margin-top:24px"><a href="${SITE_URL}/mes-reservations" style="background:#c94a0a;color:#ffffff;padding:10px 18px;border-radius:10px;text-decoration:none;font-weight:bold">Voir mes réservations</a></p>
+    <p style="margin-top:24px"><a href="${SITE_URL}${cta.href}" style="background:#c94a0a;color:#ffffff;padding:10px 18px;border-radius:10px;text-decoration:none;font-weight:bold">${cta.label}</a></p>
     <p style="color:#556372;font-size:12px;margin-top:24px">« Avant de signer, parle à quelqu'un qui habite déjà là. »</p>
   </div>
 </div>`;
@@ -214,4 +214,38 @@ export async function sendDueEmails() {
   const tasks = (data ?? []) as { booking_id: string; kind: EmailKind }[];
   for (const t of tasks) await sendBookingEmails(t.booking_id, t.kind);
   return tasks.length;
+}
+
+// Nouveau message dans une conversation : on prévient l'autre participant,
+// au plus une fois toutes les 30 minutes par conversation (pour ne pas spammer).
+export async function sendMessageEmail(bookingId: string, authorId: string, body: string) {
+  try {
+    const admin = createAdminClient();
+    const { data: claimed, error } = await admin.rpc("claim_message_email", { p_booking_id: bookingId });
+    if (error) throw new Error(error.message);
+    if (!claimed) return;
+
+    const { data } = await admin.rpc("booking_email_info", { p_booking_id: bookingId });
+    const info = (data as BookingEmailInfo[] | null)?.[0];
+    if (!info) return;
+
+    const authorIsSeeker = authorId === info.seeker_id;
+    const authorName = (authorIsSeeker ? info.seeker_first_name : info.resident_first_name) ?? "Ton interlocuteur";
+    const to = await emailOf(authorIsSeeker ? info.resident_profile_id : info.seeker_id);
+    if (!to) return;
+    const preview = body.length > 300 ? `${body.slice(0, 300)}…` : body;
+    await sendEmail(
+      to,
+      `Nouveau message de ${authorName}`,
+      layout(
+        `${escapeHtml(authorName)} t'a écrit`,
+        p(`À propos de : ${describe(info)}.`) +
+          p(`<em style="white-space:pre-line">« ${escapeHtml(preview)} »</em>`) +
+          p("Réponds directement sur le site."),
+        { href: `/messages/${bookingId}`, label: "Répondre" },
+      ),
+    );
+  } catch (e) {
+    console.error("sendMessageEmail", bookingId, e);
+  }
 }
