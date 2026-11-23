@@ -328,3 +328,7 @@ Facebook de quartier, bouche-à-oreille).
   questions, annulation, rappel (tâche quotidienne, rendez-vous dans les 36 h), demande d'avis. Chaque
   e-mail n'est envoyé qu'une fois (`claim_booking_email`, colonnes `email_*_at` sur `bookings`).
 
+- Pages `/faq`, `/cgu`, `/confidentialite`, `/mentions-legales` (pied de page sur tout le site,
+  `src/components/site-footer.tsx`). Les pages légales sont une **version de travail** : les passages
+  surlignés `[…]` (éditeur, SIRET, contact, médiateur, durées de conservation, rétractation) sont à
+  compléter, puis à faire relire par un professionnel avant le lancement.
