@@ -1,4 +1,5 @@
 // Page /compte : infos personnelles, mot de passe, déconnexion, suppression du compte.
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
@@ -34,6 +35,10 @@ async function AccountContent() {
       <p className="text-zinc-600 dark:text-zinc-400">
         Connecté avec <strong>{user.email}</strong>
       </p>
+
+      <Link href="/devenir-habitant" className="font-medium text-emerald-700 underline">
+        Devenir habitant (ou voir l&apos;état de ma demande)
+      </Link>
 
       <Section title="Mes informations">
         <ProfileForm firstName={profile?.first_name ?? ""} lastName={profile?.last_name ?? ""} />
