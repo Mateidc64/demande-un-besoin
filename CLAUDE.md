@@ -251,8 +251,8 @@ Organisation du code :
 | 5 | Offres et disponibilités | L'habitant crée ses offres, ses prix et ses créneaux. | ✅ |
 | 6 | Recherche | Autocomplétion d'adresse, carte + liste des habitants dans le rayon. | ✅ |
 | 7 | Profil public | Page profil habitant avec offres et avis. | ✅ |
-| 8 | Réservation | Choix du créneau, création de la réservation, tableau de bord habitant. | en cours |
-| 9 | Paiement | Stripe Connect en mode test : paiement, versement, remboursement. | |
+| 8 | Réservation | Choix du créneau, création de la réservation, tableau de bord habitant. | ✅ |
+| 9 | Paiement | Stripe Connect en mode test : paiement, versement, remboursement. | en cours |
 | 10 | Avis et e-mails | Notes dans les deux sens, e-mails de confirmation, rappel, demande d'avis. | |
 | 11 | Finitions | Pages légales, mobile soigné, PWA, page d'accueil finale. | |
 | 12 | Lancement test | Stripe en mode réel, lancement sur un seul quartier pilote. | |
@@ -290,3 +290,22 @@ Un seul quartier très demandé (ex. un arrondissement de Paris ou de Lyon). Obj
 aux chercheurs : 30 à 50 habitants vérifiés recrutés à la main (affiches dans les halls, groupes
 Facebook de quartier, bouche-à-oreille).
 - Réservations (étape 8) : créneaux de 30 min calculés par `available_slots()` (heure de Paris, au moins 2 h à l'avance, sans chevauchement). Création via `create_booking()`, réponse de l'habitant via `respond_booking()`, annulation via `cancel_booking()`, liste via `my_bookings()`. Le contact de l'habitant n'est montré au chercheur qu'une fois la réservation confirmée ; à l'étape 9 ce sera après paiement.
+- Paiements (étape 9) : modèle Stripe « charges et virements séparés ». Le chercheur paie à la demande
+  (Stripe Checkout, page ouverte 30 min ; une demande non payée bloque le créneau 30 min puis est
+  annulée). L'habitant ne voit la demande qu'une fois payée. L'argent reste sur le compte de la
+  plateforme ; le versement de 80 % (`transfers` avec `source_transaction`) part quand le chercheur
+  confirme l'échange, ou 48 h après le créneau. Refus ou annulation par l'habitant : remboursement
+  total. Annulation par le chercheur : remboursement total si la demande n'est pas encore acceptée ou
+  si le créneau est à plus de 24 h ; sinon l'habitant est payé. « Signaler un problème » met la
+  réservation en `litige` (argent bloqué, l'admin tranche à la main).
+- La base décide de ce qui est dû (`refund_due`, `transfer_due` sur `bookings`) ; le serveur exécute
+  chez Stripe (`src/lib/paiements.ts`) avec des clés d'idempotence, puis l'enregistre
+  (`record_refund`, `record_transfer`). Les fonctions serveur (`record_booking_payment`,
+  `booking_maintenance`, `booking_money_tasks`, `set_resident_stripe`…) ne sont accessibles qu'avec la
+  clé `service_role`, rangée seulement dans Vercel (`SUPABASE_SERVICE_ROLE_KEY`).
+- Variables Vercel de l'étape 9 : `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`,
+  `SUPABASE_SERVICE_ROLE_KEY`, `CRON_SECRET`. Webhook Stripe : `/api/stripe/webhook`
+  (`checkout.session.completed`). Tâche automatique quotidienne (vercel.json) : `/api/cron/paiements`.
+- Un habitant ne peut être réservé qu'après avoir connecté son compte bancaire
+  (`residents.stripe_ready`, page `/mes-offres`). `my_bookings()` est remplacée par
+  `bookings_overview()` (elle reste en base, sans DROP).
