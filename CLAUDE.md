@@ -252,8 +252,8 @@ Organisation du code :
 | 6 | Recherche | Autocomplétion d'adresse, carte + liste des habitants dans le rayon. | ✅ |
 | 7 | Profil public | Page profil habitant avec offres et avis. | ✅ |
 | 8 | Réservation | Choix du créneau, création de la réservation, tableau de bord habitant. | ✅ |
-| 9 | Paiement | Stripe Connect en mode test : paiement, versement, remboursement. | en cours |
-| 10 | Avis et e-mails | Notes dans les deux sens, e-mails de confirmation, rappel, demande d'avis. | |
+| 9 | Paiement | Stripe Connect en mode test : paiement, versement, remboursement. | ✅ |
+| 10 | Avis et e-mails | Notes dans les deux sens, e-mails de confirmation, rappel, demande d'avis. | en cours |
 | 11 | Finitions | Pages légales, mobile soigné, PWA, page d'accueil finale. | |
 | 12 | Lancement test | Stripe en mode réel, lancement sur un seul quartier pilote. | |
 
@@ -318,3 +318,13 @@ Facebook de quartier, bouche-à-oreille).
   Plus Jakarta Sans. Logo « maison bulle » dans `src/components/logo.tsx` et `src/app/icon.svg`. Le site
   est en thème clair uniquement (mode sombre automatique désactivé). L'accueil utilise une illustration
   dessinée (`street-illustration.tsx`) en attendant de vraies photos du quartier pilote.
+- Avis (étape 10) : `leave_review(réservation, note, commentaire)`, seulement sur un échange `terminee`,
+  une fois par personne, sur l'autre participant. Formulaire étoiles dans « Mes réservations ». Les avis
+  reçus par un habitant s'affichent sur son profil public (`reviews_for_profile`).
+- E-mails (étape 10) : Resend appelé directement par son API (`src/lib/emails.ts`, pas de librairie),
+  clé `RESEND_API_KEY` dans Vercel, expéditeur `EMAIL_FROM` (par défaut l'adresse de test
+  `onboarding@resend.dev`, qui n'envoie qu'au propriétaire du compte Resend tant qu'aucun domaine n'est
+  vérifié). E-mails : paiement reçu (chercheur + habitant), confirmation avec contact et checklist de
+  questions, annulation, rappel (tâche quotidienne, rendez-vous dans les 36 h), demande d'avis. Chaque
+  e-mail n'est envoyé qu'une fois (`claim_booking_email`, colonnes `email_*_at` sur `bookings`).
+
