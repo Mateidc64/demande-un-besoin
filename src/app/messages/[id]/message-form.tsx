@@ -8,7 +8,7 @@ import { sendMessage, type MessageState } from "./actions";
 
 const REFRESH_MS = 15_000;
 
-export function MessageForm({ bookingId, canWrite }: { bookingId: string; canWrite: boolean }) {
+export function MessageForm({ conversationId }: { conversationId: string }) {
   const router = useRouter();
   const [state, action, pending] = useActionState<MessageState, FormData>(sendMessage, {});
   const formRef = useRef<HTMLFormElement>(null);
@@ -25,13 +25,9 @@ export function MessageForm({ bookingId, canWrite }: { bookingId: string; canWri
     return () => clearInterval(id);
   }, [router]);
 
-  if (!canWrite) {
-    return <p className="text-sm text-ardoise">Cette réservation est annulée : la conversation est fermée.</p>;
-  }
-
   return (
     <form ref={formRef} action={action} className="flex flex-col gap-2">
-      <input type="hidden" name="booking_id" value={bookingId} />
+      <input type="hidden" name="conversation_id" value={conversationId} />
       <label htmlFor="body" className="sr-only">
         Ton message
       </label>
@@ -49,6 +45,11 @@ export function MessageForm({ bookingId, canWrite }: { bookingId: string; canWri
         }}
       />
       {state.error && <p className="text-sm text-red-700">{state.error}</p>}
+      {state.masked && !state.error && (
+        <p className="text-sm text-amber-800">
+          Les numéros, e-mails et liens sont masqués : les échanges passent par le site jusqu&apos;à la réservation.
+        </p>
+      )}
       <button
         disabled={pending}
         className="self-end rounded-xl bg-action px-5 py-2 text-sm font-semibold text-white hover:bg-action-survol disabled:opacity-50"

@@ -218,19 +218,21 @@ export async function sendDueEmails() {
 
 // Nouveau message dans une conversation : on prévient l'autre participant,
 // au plus une fois toutes les 30 minutes par conversation (pour ne pas spammer).
-export async function sendMessageEmail(bookingId: string, authorId: string, body: string) {
+export async function sendMessageEmail(conversationId: string, authorId: string, body: string) {
   try {
     const admin = createAdminClient();
-    const { data: claimed, error } = await admin.rpc("claim_message_email", { p_booking_id: bookingId });
+    const { data: claimed, error } = await admin.rpc("claim_conversation_email", { p_conversation_id: conversationId });
     if (error) throw new Error(error.message);
     if (!claimed) return;
 
-    const { data } = await admin.rpc("booking_email_info", { p_booking_id: bookingId });
-    const info = (data as BookingEmailInfo[] | null)?.[0];
+    const { data } = await admin.rpc("conversation_email_info", { p_conversation_id: conversationId });
+    const info = (
+      data as { seeker_id: string; seeker_first_name: string | null; resident_profile_id: string; resident_first_name: string | null }[] | null
+    )?.[0];
     if (!info) return;
 
     const authorIsSeeker = authorId === info.seeker_id;
-    const authorName = (authorIsSeeker ? info.seeker_first_name : info.resident_first_name) ?? "Ton interlocuteur";
+    const authorName = (authorIsSeeker ? info.seeker_first_name : info.resident_first_name) ?? "Quelqu'un";
     const to = await emailOf(authorIsSeeker ? info.resident_profile_id : info.seeker_id);
     if (!to) return;
     const preview = body.length > 300 ? `${body.slice(0, 300)}…` : body;
@@ -239,13 +241,11 @@ export async function sendMessageEmail(bookingId: string, authorId: string, body
       `Nouveau message de ${authorName}`,
       layout(
         `${escapeHtml(authorName)} t'a écrit`,
-        p(`À propos de : ${describe(info)}.`) +
-          p(`<em style="white-space:pre-line">« ${escapeHtml(preview)} »</em>`) +
-          p("Réponds directement sur le site."),
-        { href: `/messages/${bookingId}`, label: "Répondre" },
+        p(`<em style="white-space:pre-line">« ${escapeHtml(preview)} »</em>`) + p("Réponds directement sur le site."),
+        { href: `/messages/${conversationId}`, label: "Répondre" },
       ),
     );
   } catch (e) {
-    console.error("sendMessageEmail", bookingId, e);
+    console.error("sendMessageEmail", conversationId, e);
   }
 }

@@ -1,4 +1,4 @@
-// Barre du haut du site : nom de l'app, « Habitant », « Mes réservations », « Se connecter » / « Mon compte ».
+// Barre du haut du site : nom de l'app, « Habitant », « Mes réservations », « Messages », « Se connecter » / « Mon compte ».
 import Link from "next/link";
 import { Suspense } from "react";
 import { Logo } from "@/components/logo";
@@ -19,6 +19,11 @@ async function AccountLink() {
       {loggedIn && (
         <Link href="/mes-reservations" className="text-sm font-semibold text-nuit hover:underline">
           Mes réservations
+        </Link>
+      )}
+      {loggedIn && (
+        <Link href="/messages" className="text-sm font-semibold text-nuit hover:underline">
+          Messages
         </Link>
       )}
       <Link

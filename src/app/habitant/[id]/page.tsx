@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { OFFERS, WEEKDAYS, residentShare, type OfferType } from "@/lib/offres";
 import { createClient } from "@/lib/supabase/server";
+import { startConversation } from "@/app/messages/[id]/actions";
 import { ReportForm } from "./report-form";
 
 type PublicProfile = {
@@ -34,12 +35,14 @@ async function Profile({ params }: { params: Promise<{ id: string }> }) {
   const profile = (data as PublicProfile[] | null)?.[0];
   if (!profile) notFound();
 
-  const [{ data: offers }, { data: slots }, { data: reviews }] = await Promise.all([
+  const [{ data: claims }, { data: offers }, { data: slots }, { data: reviews }] = await Promise.all([
+    supabase.auth.getClaims(),
     supabase.from("offers").select("id, type, price_cents").eq("resident_id", id).eq("active", true).order("price_cents"),
     supabase.from("availabilities").select("weekday, start_time, end_time").eq("resident_id", id).order("weekday").order("start_time"),
     supabase.rpc("reviews_for_profile", { p_profile_id: profile.profile_id }),
   ]);
 
+  const isMe = claims?.claims?.sub === profile.profile_id;
   const years = profile.move_in_year ? new Date().getFullYear() - profile.move_in_year : null;
   const place = [profile.street_name, profile.neighborhood, profile.city].filter(Boolean).join(", ");
 
@@ -80,6 +83,18 @@ async function Profile({ params }: { params: Promise<{ id: string }> }) {
       </div>
 
       {profile.bio && <p className="whitespace-pre-line">{profile.bio}</p>}
+
+      {!isMe && (
+        <form action={startConversation} className="flex flex-wrap items-center gap-3 rounded-2xl bg-voisin-pale p-4">
+          <input type="hidden" name="resident_id" value={profile.resident_id} />
+          <p className="flex-1 text-sm text-nuit">
+            Une question avant de réserver ? Écris à {profile.first_name}, c&apos;est gratuit.
+          </p>
+          <button className="rounded-xl border-2 border-nuit bg-white px-4 py-2 text-sm font-bold text-nuit hover:bg-creme">
+            💬 Poser une question
+          </button>
+        </form>
+      )}
 
       <section>
         <h2 className="mb-3 text-lg font-semibold">Ce que {profile.first_name} propose</h2>
