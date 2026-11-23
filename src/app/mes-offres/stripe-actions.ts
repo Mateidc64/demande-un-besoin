@@ -19,26 +19,37 @@ export async function connectStripe(): Promise<void> {
     .maybeSingle();
   if (!resident) redirect("/devenir-habitant");
 
+  // Les erreurs de Stripe sont affichées sur /mes-offres au lieu de faire planter la page.
+  let url: string;
+  try {
+    url = await onboardingLink(resident.id, resident.stripe_account_id as string | null, auth.user.email);
+  } catch (e) {
+    console.error("connectStripe", e);
+    const message = e instanceof Error ? e.message : String(e);
+    redirect(`/mes-offres?stripe=erreur&detail=${encodeURIComponent(message.slice(0, 300))}`);
+  }
+  redirect(url);
+}
+
+async function onboardingLink(residentId: string, existingAccount: string | null, email?: string | null) {
   const stripe = getStripe();
-  let accountId = resident.stripe_account_id as string | null;
+  let accountId = existingAccount;
   if (!accountId) {
-    const account = await stripe.accounts.create(
-      {
-        type: "express",
-        country: "FR",
-        email: auth.user.email ?? undefined,
-        business_type: "individual",
-        capabilities: { card_payments: { requested: true }, transfers: { requested: true } },
-        metadata: { resident_id: resident.id },
-      },
-      { idempotencyKey: `compte-${resident.id}` },
-    );
+    const account = await stripe.accounts.create({
+      type: "express",
+      country: "FR",
+      email: email ?? undefined,
+      business_type: "individual",
+      capabilities: { card_payments: { requested: true }, transfers: { requested: true } },
+      metadata: { resident_id: residentId },
+    });
     accountId = account.id;
-    await createAdminClient().rpc("set_resident_stripe", {
-      p_resident_id: resident.id,
+    const { error } = await createAdminClient().rpc("set_resident_stripe", {
+      p_resident_id: residentId,
       p_account_id: accountId,
       p_ready: false,
     });
+    if (error) throw new Error(`Enregistrement du compte : ${error.message}`);
   }
 
   const base = await siteUrl();
@@ -48,7 +59,7 @@ export async function connectStripe(): Promise<void> {
     refresh_url: `${base}/stripe/retour?relancer=1`,
     return_url: `${base}/stripe/retour`,
   });
-  redirect(link.url);
+  return link.url;
 }
 
 // Vérifie l'état du compte chez Stripe (au retour du formulaire Stripe).
