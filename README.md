@@ -15,3 +15,13 @@ Le cahier des charges complet est dans [CLAUDE.md](./CLAUDE.md).
 3. Ouvrir http://localhost:3000 dans ton navigateur.
 
 Pour arrêter le site : `Ctrl + C` dans le terminal.
+
+## Brancher la base de données (Supabase)
+
+1. Copier le fichier `.env.example` et le renommer en `.env.local`.
+2. Y coller la Project URL et la clé anon / publishable de Supabase
+   (Supabase > ton projet > bouton « Connect »).
+3. Relancer `npm run dev`, puis ouvrir http://localhost:3000/statut :
+   on doit voir « ✅ Tout fonctionne ».
+
+`.env.local` reste sur ton ordinateur : il n'est jamais envoyé sur GitHub.

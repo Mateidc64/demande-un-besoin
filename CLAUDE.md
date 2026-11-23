@@ -117,6 +117,19 @@ repose sur la vérification et l'indépendance des habitants.
 - Badges calculés (pas de table) : « Domicile vérifié », « Habitant depuis 5 ans + »,
   « Réponses jugées honnêtes » (bonne moyenne d'avis).
 
+Détails techniques (choisis à l'étape 2) :
+- Les tables sont décrites en SQL dans `supabase/migrations/` (un fichier par changement, à exécuter
+  dans l'ordre dans Supabase > SQL Editor). Ne jamais modifier un fichier déjà exécuté : en ajouter un.
+- `residents` est **privée** (adresse exacte, contact) : seuls l'habitant et l'admin la lisent. Les
+  chercheurs passent par la fonction `search_residents(lat, lng, building_key, rayon)`, qui renvoie
+  seulement prénom, ancienneté, présentation, « même immeuble » et une distance arrondie à 50 m.
+- Le téléphone / lien visio est dans `residents.contact_info` (pas dans `profiles`).
+- Un utilisateur ne peut pas se nommer admin, ni se déclarer « vérifié », ni changer son
+  `stripe_account_id` : ces colonnes ne sont modifiables que par l'admin ou le serveur.
+- Les réservations (`bookings`) ne sont jamais écrites depuis le navigateur : seulement par le serveur
+  (avec Stripe, étape 10).
+- Page `/statut` : vérifie que le site parle bien à la base de données.
+
 Recherche « à 200 m » : géocodage de l'adresse avec l'API Adresse du gouvernement (gratuite,
 api-adresse.data.gouv.fr), puis calcul de distance (extension PostGIS de Supabase).
 
@@ -168,9 +181,9 @@ Commandes utiles :
 
 ## 11. Plan d'étapes (0 à 12)
 
-0. **Squelette** : projet Next.js qui démarre, page d'accueil simple en français. (en cours)
-1. **Mise en ligne** : brancher le dépôt sur Vercel pour avoir une adresse publique.
-2. **Supabase** : créer le projet, brancher les clés, tables de base.
+0. **Squelette** : projet Next.js qui démarre, page d'accueil simple en français. ✅
+1. **Mise en ligne** : brancher le dépôt sur Vercel pour avoir une adresse publique. ✅ https://demande-un-besoin.vercel.app
+2. **Supabase** : créer le projet, brancher les clés, tables de base. (en cours)
 3. **Inscription / connexion**.
 4. **Choix du rôle et profil de base**.
 5. **Profil habitant** : adresse (géocodage), ancienneté, présentation.
