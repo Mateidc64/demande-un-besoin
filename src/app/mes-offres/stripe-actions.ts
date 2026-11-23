@@ -35,12 +35,20 @@ async function onboardingLink(residentId: string, existingAccount: string | null
   const stripe = getStripe();
   let accountId = existingAccount;
   if (!accountId) {
-    const account = await stripe.accounts.create({
-      type: "express",
-      country: "FR",
-      email: email ?? undefined,
-      business_type: "individual",
-      capabilities: { card_payments: { requested: true }, transfers: { requested: true } },
+    // Stripe demande désormais l'API « Accounts v2 » pour les nouveaux comptes connectés.
+    // Configuration « recipient » : l'habitant reçoit des virements de la plateforme.
+    const account = await stripe.v2.core.accounts.create({
+      contact_email: email ?? undefined,
+      dashboard: "express",
+      identity: { country: "fr", entity_type: "individual" },
+      configuration: {
+        recipient: { capabilities: { stripe_balance: { stripe_transfers: { requested: true } } } },
+      },
+      defaults: {
+        currency: "eur",
+        locales: ["fr-FR"],
+        responsibilities: { fees_collector: "application", losses_collector: "application" },
+      },
       metadata: { resident_id: residentId },
     });
     accountId = account.id;
@@ -53,11 +61,15 @@ async function onboardingLink(residentId: string, existingAccount: string | null
   }
 
   const base = await siteUrl();
-  const link = await stripe.accountLinks.create({
+  const link = await stripe.v2.core.accountLinks.create({
     account: accountId,
-    type: "account_onboarding",
-    refresh_url: `${base}/stripe/retour?relancer=1`,
-    return_url: `${base}/stripe/retour`,
+    use_case: {
+      type: "account_onboarding",
+      account_onboarding: {
+        refresh_url: `${base}/stripe/retour?relancer=1`,
+        return_url: `${base}/stripe/retour`,
+      },
+    },
   });
   return link.url;
 }

@@ -148,8 +148,11 @@ export async function tryRunMoneyTasks() {
 
 // Vérifie chez Stripe si le compte de l'habitant peut recevoir des versements.
 export async function refreshResidentStripe(residentId: string, accountId: string) {
-  const account = await getStripe().accounts.retrieve(accountId);
-  const ready = Boolean(account.details_submitted && account.payouts_enabled);
+  const account = await getStripe().v2.core.accounts.retrieve(accountId, {
+    include: ["configuration.recipient"],
+  });
+  const transfers = account.configuration?.recipient?.capabilities?.stripe_balance?.stripe_transfers;
+  const ready = transfers?.status === "active";
   await createAdminClient().rpc("set_resident_stripe", {
     p_resident_id: residentId,
     p_account_id: accountId,
