@@ -28,11 +28,11 @@ type Booking = {
 };
 
 const STATUS: Record<Booking["status"], { label: string; className: string }> = {
-  en_attente: { label: "En attente", className: "bg-amber-50 text-amber-800 dark:bg-amber-950 dark:text-amber-200" },
-  confirmee: { label: "Confirmée", className: "bg-emerald-50 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200" },
-  terminee: { label: "Terminée", className: "bg-zinc-100 dark:bg-zinc-800" },
-  annulee: { label: "Annulée", className: "bg-zinc-100 text-zinc-500 dark:bg-zinc-800" },
-  litige: { label: "Litige", className: "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300" },
+  en_attente: { label: "En attente", className: "bg-amber-50 text-amber-800" },
+  confirmee: { label: "Confirmée", className: "bg-verifie-pale text-verifie" },
+  terminee: { label: "Terminée", className: "bg-brume" },
+  annulee: { label: "Annulée", className: "bg-brume text-ardoise" },
+  litige: { label: "Litige", className: "bg-red-50 text-red-700" },
 };
 
 function statusOf(b: Booking) {
@@ -54,7 +54,7 @@ function currentTime() {
   return new Date().getTime();
 }
 
-const BUTTON = "rounded-lg px-4 py-2 text-sm";
+const BUTTON = "rounded-xl px-4 py-2 text-sm";
 
 function BookingCard({ b, now }: { b: Booking; now: number }) {
   const isWritten = b.offer_type === "question_ecrite";
@@ -75,22 +75,22 @@ function BookingCard({ b, now }: { b: Booking; now: number }) {
     isSeeker && b.status === "confirmee" && lessThan24h ? "Annuler (non remboursé, moins de 24 h)" : "Annuler";
 
   return (
-    <li className="rounded-xl border border-zinc-200 p-5 dark:border-zinc-800">
+    <li className="rounded-2xl border bg-white border-brume p-5">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <p className="font-semibold">
             {OFFERS[b.offer_type].label} avec {b.other_first_name}
           </p>
-          <p className="text-sm capitalize text-zinc-600 dark:text-zinc-400">
+          <p className="text-sm capitalize text-ardoise">
             {isWritten ? `Demandée le ${formatDateTime(b.starts_at)}` : formatDateTime(b.starts_at)}
           </p>
         </div>
         <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${status.className}`}>{status.label}</span>
       </div>
       <p className="mt-2 text-sm">
-        <span className="text-zinc-500">Logement :</span> {b.target_address}
+        <span className="text-ardoise">Logement :</span> {b.target_address}
       </p>
-      {b.message && <p className="mt-1 whitespace-pre-line text-sm text-zinc-700 dark:text-zinc-300">« {b.message} »</p>}
+      {b.message && <p className="mt-1 whitespace-pre-line text-sm text-encre">« {b.message} »</p>}
       <p className="mt-2 text-sm">
         {isSeeker ? (
           <>Prix : <strong>{b.amount_cents / 100} €</strong>{b.paid && " (payé)"}</>
@@ -98,9 +98,9 @@ function BookingCard({ b, now }: { b: Booking; now: number }) {
           <>Tu recevras : <strong>{(b.amount_cents - b.commission_cents) / 100} €</strong></>
         )}
       </p>
-      {note && <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{note}</p>}
+      {note && <p className="mt-1 text-sm text-ardoise">{note}</p>}
       {b.contact_info && (
-        <p className="mt-2 rounded-lg bg-emerald-50 p-3 text-sm dark:bg-emerald-950">
+        <p className="mt-2 rounded-xl bg-verifie-pale p-3 text-sm">
           📞 Contact de {b.other_first_name} : <strong>{b.contact_info}</strong>
         </p>
       )}
@@ -108,16 +108,16 @@ function BookingCard({ b, now }: { b: Booking; now: number }) {
         {canPay && (
           <form action={payBooking}>
             <input type="hidden" name="booking_id" value={b.booking_id} />
-            <button className={`${BUTTON} bg-emerald-600 font-semibold text-white`}>Payer {b.amount_cents / 100} €</button>
+            <button className={`${BUTTON} bg-action font-semibold text-white`}>Payer {b.amount_cents / 100} €</button>
           </form>
         )}
         {canRespond && (
           <form action={respondToBooking} className="flex gap-2">
             <input type="hidden" name="booking_id" value={b.booking_id} />
-            <button name="decision" value="accepter" className={`${BUTTON} bg-emerald-600 font-semibold text-white`}>
+            <button name="decision" value="accepter" className={`${BUTTON} bg-action font-semibold text-white`}>
               Accepter
             </button>
-            <button name="decision" value="refuser" className={`${BUTTON} border border-zinc-300 dark:border-zinc-700`}>
+            <button name="decision" value="refuser" className={`${BUTTON} border border-contour`}>
               Refuser (le chercheur est remboursé)
             </button>
           </form>
@@ -126,11 +126,11 @@ function BookingCard({ b, now }: { b: Booking; now: number }) {
           <>
             <form action={confirmDone}>
               <input type="hidden" name="booking_id" value={b.booking_id} />
-              <button className={`${BUTTON} bg-emerald-600 font-semibold text-white`}>L&apos;échange a bien eu lieu</button>
+              <button className={`${BUTTON} bg-action font-semibold text-white`}>L&apos;échange a bien eu lieu</button>
             </form>
             <form action={reportProblem}>
               <input type="hidden" name="booking_id" value={b.booking_id} />
-              <button className={`${BUTTON} border border-red-300 text-red-700 dark:border-red-800`}>
+              <button className={`${BUTTON} border border-red-300 text-red-700`}>
                 Signaler un problème
               </button>
             </form>
@@ -139,7 +139,7 @@ function BookingCard({ b, now }: { b: Booking; now: number }) {
         {canCancel && (
           <form action={cancelBooking}>
             <input type="hidden" name="booking_id" value={b.booking_id} />
-            <button className={`${BUTTON} border border-red-300 text-red-700 dark:border-red-800`}>
+            <button className={`${BUTTON} border border-red-300 text-red-700`}>
               {isSeeker ? cancelLabel : "Annuler (le chercheur est remboursé)"}
             </button>
           </form>
@@ -173,17 +173,17 @@ async function Content({ searchParams }: { searchParams: Promise<{ payee?: strin
   return (
     <div className="flex flex-col gap-10">
       {payee && (
-        <p className="rounded-lg bg-emerald-50 p-3 text-sm text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200">
+        <p className="rounded-xl bg-verifie-pale p-3 text-sm text-verifie">
           Paiement reçu ✅ Ta demande est envoyée à l&apos;habitant. S&apos;il refuse, tu es remboursé en totalité.
         </p>
       )}
       {paiement === "annule" && (
-        <p className="rounded-lg bg-amber-50 p-3 text-sm text-amber-800 dark:bg-amber-950 dark:text-amber-200">
+        <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-800">
           Paiement annulé. Tu peux payer dans les 30 minutes, sinon la demande est annulée.
         </p>
       )}
       {(paiement === "erreur" || paiement === "verification") && (
-        <p className="rounded-lg bg-amber-50 p-3 text-sm text-amber-800 dark:bg-amber-950 dark:text-amber-200">
+        <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-800">
           {paiement === "erreur"
             ? "Le paiement n'a pas pu s'ouvrir. Réessaie dans un instant."
             : "Nous vérifions ton paiement : rafraîchis la page dans une minute."}
@@ -193,9 +193,9 @@ async function Content({ searchParams }: { searchParams: Promise<{ payee?: strin
       {asResident.length > 0 && (
         <section>
           <h2 className="mb-1 text-lg font-semibold">Demandes reçues (habitant)</h2>
-          <p className="mb-4 text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="mb-4 text-sm text-ardoise">
             {pendingForMe} en attente de ta réponse · Déjà versé : <strong>{earned / 100} €</strong> · À venir : <strong>{upcoming / 100} €</strong> ·{" "}
-            <Link href="/mes-offres" className="text-emerald-700 underline">
+            <Link href="/mes-offres" className="text-lien underline">
               Modifier mes offres
             </Link>
           </p>
@@ -210,9 +210,9 @@ async function Content({ searchParams }: { searchParams: Promise<{ payee?: strin
       <section>
         <h2 className="mb-4 text-lg font-semibold">Mes réservations (chercheur)</h2>
         {asSeeker.length === 0 ? (
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-ardoise">
             Aucune réservation pour l&apos;instant.{" "}
-            <Link href="/" className="text-emerald-700 underline">
+            <Link href="/" className="text-lien underline">
               Chercher une adresse
             </Link>
           </p>
@@ -232,7 +232,7 @@ export default function MesReservationsPage({ searchParams }: PageProps<"/mes-re
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-12">
       <h1 className="mb-8 text-2xl font-bold">Mes réservations</h1>
-      <Suspense fallback={<p className="text-zinc-500">Chargement…</p>}>
+      <Suspense fallback={<p className="text-ardoise">Chargement…</p>}>
         <Content searchParams={searchParams as Promise<{ payee?: string; paiement?: string }>} />
       </Suspense>
     </main>

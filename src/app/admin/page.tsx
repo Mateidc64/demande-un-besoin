@@ -40,41 +40,41 @@ async function AdminContent() {
   }
 
   if (pending.length === 0) {
-    return <p className="text-zinc-600 dark:text-zinc-400">Aucune demande en attente. 🎉</p>;
+    return <p className="text-ardoise">Aucune demande en attente. 🎉</p>;
   }
 
   return (
     <ul className="flex flex-col gap-6">
       {pending.map((r) => (
-        <li key={r.resident_id} className="rounded-xl border border-zinc-200 p-6 dark:border-zinc-800">
+        <li key={r.resident_id} className="rounded-2xl border bg-white border-brume p-6">
           <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
             <h2 className="text-lg font-semibold">
               {r.first_name} {r.last_name}
             </h2>
-            <span className="text-sm text-zinc-500">
+            <span className="text-sm text-ardoise">
               Envoyée le {new Date(r.submitted_at).toLocaleDateString("fr-FR")}
             </span>
           </div>
           <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
-            <dt className="text-zinc-500">Adresse</dt>
+            <dt className="text-ardoise">Adresse</dt>
             <dd className="font-medium">{r.address_label}</dd>
-            <dt className="text-zinc-500">E-mail</dt>
+            <dt className="text-ardoise">E-mail</dt>
             <dd>{r.email}</dd>
-            <dt className="text-zinc-500">Téléphone</dt>
+            <dt className="text-ardoise">Téléphone</dt>
             <dd>{r.contact_info}</dd>
-            <dt className="text-zinc-500">Emménagement</dt>
+            <dt className="text-ardoise">Emménagement</dt>
             <dd>
               {r.move_in_year} · {r.housing_type}
             </dd>
           </dl>
-          <p className="mt-3 whitespace-pre-line text-sm text-zinc-700 dark:text-zinc-300">{r.bio}</p>
+          <p className="mt-3 whitespace-pre-line text-sm text-encre">{r.bio}</p>
 
           {links.get(r.resident_id) ? (
             <a
               href={links.get(r.resident_id)}
               target="_blank"
               rel="noreferrer"
-              className="mt-4 inline-block font-medium text-emerald-700 underline"
+              className="mt-4 inline-block font-medium text-lien underline"
             >
               Ouvrir le justificatif ↗
             </a>
@@ -82,7 +82,7 @@ async function AdminContent() {
             <p className="mt-4 text-sm text-red-600">Justificatif introuvable.</p>
           )}
 
-          <p className="mt-3 text-xs text-zinc-500">
+          <p className="mt-3 text-xs text-ardoise">
             À vérifier : nom identique, même adresse, document de moins de 3 mois.
           </p>
 
@@ -92,20 +92,20 @@ async function AdminContent() {
             <input
               name="note"
               placeholder="Note (facultative, ex. motif du refus)"
-              className="rounded-lg border border-zinc-300 px-4 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+              className="rounded-xl border border-contour px-4 py-2 text-sm"
             />
             <div className="flex gap-3">
               <button
                 name="decision"
                 value="valider"
-                className="rounded-lg bg-emerald-600 px-5 py-2.5 font-semibold text-white hover:bg-emerald-700"
+                className="rounded-xl bg-action px-5 py-2.5 font-semibold text-white hover:bg-action-survol"
               >
                 Valider
               </button>
               <button
                 name="decision"
                 value="refuser"
-                className="rounded-lg border border-red-300 px-5 py-2.5 font-semibold text-red-700 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-950"
+                className="rounded-xl border border-red-300 px-5 py-2.5 font-semibold text-red-700 hover:bg-red-50"
               >
                 Refuser
               </button>
@@ -121,10 +121,10 @@ export default function AdminPage() {
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-12">
       <h1 className="mb-2 text-2xl font-bold">Admin : habitants à vérifier</h1>
-      <p className="mb-8 text-zinc-600 dark:text-zinc-400">
+      <p className="mb-8 text-ardoise">
         Le justificatif est supprimé automatiquement après ta décision.
       </p>
-      <Suspense fallback={<p className="text-zinc-500">Chargement…</p>}>
+      <Suspense fallback={<p className="text-ardoise">Chargement…</p>}>
         <AdminContent />
       </Suspense>
     </main>

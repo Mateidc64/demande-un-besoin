@@ -312,3 +312,9 @@ Facebook de quartier, bouche-à-oreille).
 - Menu du haut : onglet « Habitant » → `/espace-habitant`, qui redirige vers `/devenir-habitant` (pas encore
   habitant, demande en attente ou refusée : la page montre l'état) ou vers `/mes-offres` (« Espace habitant »)
   si l'habitant est vérifié. Le lien « Devenir habitant » reste aussi dans « Mon compte ».
+- Charte graphique (Google Doc « Charte graphique — Demande à un voisin ») : couleurs définies une seule fois
+  dans `src/app/globals.css` (`@theme` : `nuit`, `voisin`, `action`, `verifie`, `lien`, `encre`, `ardoise`,
+  `brume`, `contour`, `creme`…), utilisées comme classes Tailwind (`bg-action`, `text-nuit`…). Police
+  Plus Jakarta Sans. Logo « maison bulle » dans `src/components/logo.tsx` et `src/app/icon.svg`. Le site
+  est en thème clair uniquement (mode sombre automatique désactivé). L'accueil utilise une illustration
+  dessinée (`street-illustration.tsx`) en attendant de vraies photos du quartier pilote.

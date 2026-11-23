@@ -35,16 +35,16 @@ async function Content({ params }: { params: Promise<{ offerId: string }> }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="rounded-xl border border-zinc-200 p-5 dark:border-zinc-800">
-        <p className="text-sm text-zinc-500">
+      <div className="rounded-2xl border bg-white border-brume p-5">
+        <p className="text-sm text-ardoise">
           Avec{" "}
-          <Link href={`/habitant/${offer.resident_id}`} className="font-medium text-emerald-700 underline">
+          <Link href={`/habitant/${offer.resident_id}`} className="font-medium text-lien underline">
             {resident.first_name}
           </Link>{" "}
           · {resident.street_name}
         </p>
         <p className="mt-1 text-lg font-semibold">{info.label}</p>
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">{info.description}</p>
+        <p className="text-sm text-ardoise">{info.description}</p>
         <p className="mt-2 text-xl font-bold">{offer.price_cents / 100} €</p>
       </div>
 
@@ -53,7 +53,7 @@ async function Content({ params }: { params: Promise<{ offerId: string }> }) {
       ) : (
         <p>
           Pour réserver,{" "}
-          <Link href="/connexion" className="font-medium text-emerald-700 underline">
+          <Link href="/connexion" className="font-medium text-lien underline">
             connecte-toi ou crée un compte
           </Link>
           .
@@ -67,7 +67,7 @@ export default function ReserverPage({ params }: PageProps<"/reserver/[offerId]"
   return (
     <main className="mx-auto w-full max-w-xl flex-1 px-6 py-12">
       <h1 className="mb-6 text-2xl font-bold">Réserver</h1>
-      <Suspense fallback={<p className="text-zinc-500">Chargement…</p>}>
+      <Suspense fallback={<p className="text-ardoise">Chargement…</p>}>
         <Content params={params} />
       </Suspense>
     </main>

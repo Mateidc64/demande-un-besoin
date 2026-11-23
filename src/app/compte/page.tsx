@@ -8,7 +8,7 @@ import { DeleteAccountForm, PasswordForm, ProfileForm } from "./account-forms";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-xl border border-zinc-200 p-6 dark:border-zinc-800">
+    <section className="rounded-2xl border bg-white border-brume p-6">
       <h2 className="mb-4 text-lg font-semibold">{title}</h2>
       {children}
     </section>
@@ -32,17 +32,17 @@ async function AccountContent() {
 
   return (
     <div className="flex flex-col gap-6">
-      <p className="text-zinc-600 dark:text-zinc-400">
+      <p className="text-ardoise">
         Connecté avec <strong>{user.email}</strong>
       </p>
 
       {profile?.is_admin && (
-        <Link href="/admin" className="font-medium text-emerald-700 underline">
+        <Link href="/admin" className="font-medium text-lien underline">
           Espace admin : habitants à vérifier
         </Link>
       )}
 
-      <Link href="/devenir-habitant" className="font-medium text-emerald-700 underline">
+      <Link href="/devenir-habitant" className="font-medium text-lien underline">
         Devenir habitant (ou voir l&apos;état de ma demande)
       </Link>
 
@@ -59,7 +59,7 @@ async function AccountContent() {
       <form action={signOut}>
         <button
           type="submit"
-          className="rounded-lg border border-zinc-300 px-5 py-2.5 font-semibold hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-900"
+          className="rounded-xl border border-contour px-5 py-2.5 font-semibold hover:bg-creme"
         >
           Se déconnecter
         </button>
@@ -76,7 +76,7 @@ export default function ComptePage() {
   return (
     <main className="mx-auto w-full max-w-xl flex-1 px-6 py-12">
       <h1 className="mb-6 text-2xl font-bold">Mon compte</h1>
-      <Suspense fallback={<p className="text-zinc-500">Chargement…</p>}>
+      <Suspense fallback={<p className="text-ardoise">Chargement…</p>}>
         <AccountContent />
       </Suspense>
     </main>

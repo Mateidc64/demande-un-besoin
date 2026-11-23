@@ -15,7 +15,7 @@ import {
 } from "./constants";
 
 const inputClass =
-  "w-full rounded-lg border border-zinc-300 px-4 py-2.5 dark:border-zinc-700 dark:bg-zinc-900";
+  "w-full rounded-xl border border-contour px-4 py-2.5";
 const labelClass = "flex flex-col gap-1 text-sm font-medium";
 const STEPS = ["Toi", "Ton adresse", "Ta présentation", "Justificatif"];
 
@@ -124,8 +124,8 @@ export function ResidentForm({ userId, defaultFirstName }: { userId: string; def
       <ol className="grid grid-cols-4 gap-2 text-xs">
         {STEPS.map((label, i) => (
           <li key={label} className="flex flex-col gap-1">
-            <span className={`h-1.5 rounded-full ${i <= step ? "bg-emerald-600" : "bg-zinc-200 dark:bg-zinc-800"}`} />
-            <span className={i === step ? "font-semibold" : "text-zinc-500"}>{label}</span>
+            <span className={`h-1.5 rounded-full ${i <= step ? "bg-action" : "bg-brume"}`} />
+            <span className={i === step ? "font-semibold" : "text-ardoise"}>{label}</span>
           </li>
         ))}
       </ol>
@@ -202,9 +202,9 @@ export function ResidentForm({ userId, defaultFirstName }: { userId: string; def
               placeholder="J'habite ici depuis 6 ans avec ma famille. La rue est calme le soir, le marché du dimanche est super…"
               className={inputClass}
             />
-            <span className="text-xs font-normal text-zinc-500">{bio.trim().length} / 1000 (30 minimum)</span>
+            <span className="text-xs font-normal text-ardoise">{bio.trim().length} / 1000 (30 minimum)</span>
           </label>
-          <label className="flex items-start gap-3 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm dark:border-amber-800 dark:bg-amber-950">
+          <label className="flex items-start gap-3 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm">
             <input type="checkbox" checked={notAgent} onChange={(e) => setNotAgent(e.target.checked)} className="mt-1" />
             <span>
               Je confirme que je ne suis <strong>ni agent immobilier, ni vendeur, ni propriétaire</strong> d&apos;un bien
@@ -216,7 +216,7 @@ export function ResidentForm({ userId, defaultFirstName }: { userId: string; def
 
       {step === 3 && (
         <div className="flex flex-col gap-4">
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="text-sm text-ardoise">
             Envoie un justificatif de domicile <strong>de moins de 3 mois</strong> à ton nom et à l&apos;adresse indiquée
             : facture d&apos;énergie, quittance de loyer ou avis de taxe. Il est stocké dans un espace privé, vu
             uniquement par l&apos;équipe, puis <strong>supprimé après vérification</strong>.
@@ -233,7 +233,7 @@ export function ResidentForm({ userId, defaultFirstName }: { userId: string; def
         </div>
       )}
 
-      {error && <p className="rounded-lg bg-red-50 p-3 text-sm text-red-700 dark:bg-red-950 dark:text-red-300">{error}</p>}
+      {error && <p className="rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</p>}
 
       <div className="flex justify-between">
         {step > 0 ? (
@@ -244,7 +244,7 @@ export function ResidentForm({ userId, defaultFirstName }: { userId: string; def
               setStep(step - 1);
             }}
             disabled={pending}
-            className="rounded-lg border border-zinc-300 px-5 py-2.5 font-semibold dark:border-zinc-700"
+            className="rounded-xl border border-contour px-5 py-2.5 font-semibold"
           >
             Retour
           </button>
@@ -252,7 +252,7 @@ export function ResidentForm({ userId, defaultFirstName }: { userId: string; def
           <span />
         )}
         {step < STEPS.length - 1 ? (
-          <button type="button" onClick={next} className="rounded-lg bg-emerald-600 px-5 py-2.5 font-semibold text-white hover:bg-emerald-700">
+          <button type="button" onClick={next} className="rounded-xl bg-action px-5 py-2.5 font-semibold text-white hover:bg-action-survol">
             Continuer
           </button>
         ) : (
@@ -260,7 +260,7 @@ export function ResidentForm({ userId, defaultFirstName }: { userId: string; def
             type="button"
             onClick={submit}
             disabled={pending}
-            className="rounded-lg bg-emerald-600 px-5 py-2.5 font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
+            className="rounded-xl bg-action px-5 py-2.5 font-semibold text-white hover:bg-action-survol disabled:opacity-60"
           >
             {pending ? "Envoi en cours…" : "Envoyer ma demande"}
           </button>
