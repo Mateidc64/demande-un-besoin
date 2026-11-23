@@ -58,7 +58,9 @@ Un même compte peut être à la fois chercheur et habitant.
 | Visite du soir, entendre le bruit réel (`visite_soir`) | 30 min | 35 € | Acheteurs |
 | Réponse écrite à des questions (`question_ecrite`) | Sous 24 h | 8 € | Surtout locataires |
 
-L'habitant peut modifier ses prix dans une fourchette fixée par la plateforme.
+L'habitant peut modifier ses prix dans une fourchette fixée par la plateforme. Fourchettes choisies
+(modifiables dans `src/lib/offres.ts`) : appel 10 à 40 €, balade 25 à 80 €, visite du soir 20 à 70 €,
+réponse écrite 5 à 20 €.
 **Commission de la plateforme : 20 %** sur chaque échange.
 
 ## 5. Les parcours
@@ -159,6 +161,10 @@ Règles d'accès déjà en place :
 - Admin : `profiles.is_admin` se règle uniquement à la main dans Supabase (SQL Editor). La page `/admin`
   passe par `admin_pending_residents()` et `admin_review_resident(id, valider, note)`, qui vérifient
   `is_admin()`. Après la décision, le justificatif est supprimé du stockage (seule la décision reste).
+- Offres et disponibilités : page `/mes-offres`. Les offres sont enregistrées en « upsert » (une ligne
+  par habitant et par type) ; les disponibilités sont remplacées en entier à chaque enregistrement.
+- Exécution du SQL : MATEI a branché le connecteur Supabase dans la conversation principale du projet ;
+  les nouveaux fichiers SQL lui sont transmis pour qu'elle les applique.
 - Suppression du compte : fonction `delete_my_account()` (chacun ne peut supprimer que le sien). Elle est
   refusée si des réservations ou des avis sont liés au compte : l'admin s'en occupe alors à la main.
 
@@ -229,8 +235,8 @@ Organisation du code :
 | 1 | Base de données | Projet Supabase, tables du modèle, règles d'accès actives. | ✅ (2 fichiers SQL) |
 | 2 | Comptes | Inscription, connexion (e-mail + Google), déconnexion, page Compte. | ✅ |
 | 3 | Devenir habitant | Formulaire en étapes, envoi du justificatif, profil « en attente ». | ✅ |
-| 4 | Admin | Page admin pour valider ou refuser les habitants. | en cours |
-| 5 | Offres et disponibilités | L'habitant crée ses offres, ses prix et ses créneaux. | |
+| 4 | Admin | Page admin pour valider ou refuser les habitants. | ✅ |
+| 5 | Offres et disponibilités | L'habitant crée ses offres, ses prix et ses créneaux. | en cours |
 | 6 | Recherche | Autocomplétion d'adresse, carte + liste des habitants dans le rayon. | |
 | 7 | Profil public | Page profil habitant avec offres et avis. | |
 | 8 | Réservation | Choix du créneau, création de la réservation, tableau de bord habitant. | |

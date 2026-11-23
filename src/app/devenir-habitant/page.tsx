@@ -11,7 +11,7 @@ const STATUS_TEXT = {
   },
   verifie: {
     title: "Ton domicile est vérifié ✅",
-    text: "Bravo, tu fais partie des habitants vérifiés ! Prochaine étape bientôt disponible : choisir tes offres, tes prix et tes disponibilités.",
+    text: "Bravo, tu fais partie des habitants vérifiés ! Choisis maintenant tes offres, tes prix et tes disponibilités.",
   },
   refuse: {
     title: "Ta demande n'a pas pu être validée",
@@ -50,6 +50,12 @@ async function Content() {
         <p className="mt-4 text-sm text-zinc-500">
           Adresse déclarée : {resident.street_name}, {resident.city}
         </p>
+        <Link
+          href="/mes-offres"
+          className="mt-4 inline-block rounded-lg bg-emerald-600 px-5 py-2.5 font-semibold text-white hover:bg-emerald-700"
+        >
+          Mes offres et disponibilités
+        </Link>
       </div>
     );
   }
