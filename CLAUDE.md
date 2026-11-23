@@ -156,6 +156,9 @@ Règles d'accès déjà en place :
 - Adresses : service officiel de la Géoplateforme (`data.geopf.fr/geocodage`, successeur de
   api-adresse.data.gouv.fr), appelé depuis le navigateur (`src/lib/adresse.ts`). L'identifiant de
   l'adresse sert de `building_key` (« même immeuble »), l'arrondissement de `neighborhood`.
+- Admin : `profiles.is_admin` se règle uniquement à la main dans Supabase (SQL Editor). La page `/admin`
+  passe par `admin_pending_residents()` et `admin_review_resident(id, valider, note)`, qui vérifient
+  `is_admin()`. Après la décision, le justificatif est supprimé du stockage (seule la décision reste).
 - Suppression du compte : fonction `delete_my_account()` (chacun ne peut supprimer que le sien). Elle est
   refusée si des réservations ou des avis sont liés au compte : l'admin s'en occupe alors à la main.
 
@@ -225,8 +228,8 @@ Organisation du code :
 | 0 | Installation | Projet Next.js relié à GitHub et Vercel, page d'accueil en ligne. | ✅ |
 | 1 | Base de données | Projet Supabase, tables du modèle, règles d'accès actives. | ✅ (2 fichiers SQL) |
 | 2 | Comptes | Inscription, connexion (e-mail + Google), déconnexion, page Compte. | ✅ |
-| 3 | Devenir habitant | Formulaire en étapes, envoi du justificatif, profil « en attente ». | en cours |
-| 4 | Admin | Page admin pour valider ou refuser les habitants. | |
+| 3 | Devenir habitant | Formulaire en étapes, envoi du justificatif, profil « en attente ». | ✅ |
+| 4 | Admin | Page admin pour valider ou refuser les habitants. | en cours |
 | 5 | Offres et disponibilités | L'habitant crée ses offres, ses prix et ses créneaux. | |
 | 6 | Recherche | Autocomplétion d'adresse, carte + liste des habitants dans le rayon. | |
 | 7 | Profil public | Page profil habitant avec offres et avis. | |
