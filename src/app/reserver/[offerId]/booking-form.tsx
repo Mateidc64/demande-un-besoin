@@ -105,11 +105,11 @@ export function BookingForm({
         disabled={pending || (!isWritten && !slot)}
         className="rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
       >
-        {pending ? "Envoi…" : "Envoyer ma demande"}
+        {pending ? "Ouverture du paiement…" : "Continuer vers le paiement"}
       </button>
       <p className="text-xs text-zinc-500">
-        L&apos;habitant accepte ou refuse ta demande. Le paiement en ligne arrive très bientôt : pour l&apos;instant,
-        aucune carte n&apos;est demandée.
+        Paiement sécurisé par carte avec Stripe. L&apos;habitant accepte ou refuse ensuite ta demande : s&apos;il
+        refuse, tu es remboursé en totalité. Annulation gratuite jusqu&apos;à 24 h avant le créneau.
       </p>
     </form>
   );
