@@ -1,199 +1,251 @@
-# Demande à un voisin — cahier des charges V1
+# Demande à un voisin — cahier des charges V1 (MVP)
 
 Ce fichier est le cahier des charges du projet. Claude le relit à chaque session : il sert de boussole.
-Toute décision importante prise en cours de route doit être reportée ici.
+Il reprend le document de référence de MATEI (Google Doc « Demande à un voisin »). Toute décision prise
+en cours de route doit être reportée ici, dans la section 13 « Décisions et écarts ».
 
-## 0. Règles de travail avec Claude (à respecter en priorité)
+**Promesse :** « Avant de signer, parle à quelqu'un qui habite déjà là. »
 
-- Le porteur du projet (MATEI) débute en code. **Explique tout en français simple**, sans jargon, ou en
-  définissant chaque mot technique la première fois (ex. : « un commit, c'est une sauvegarde du code »).
-- **Une seule étape à la fois** (voir le plan en section 11). Ne jamais « faire toute l'app » d'un coup.
-- À la fin de chaque étape : dire ce qui a été fait, **comment le tester soi-même** (commandes exactes,
-  page à ouvrir, ce qu'on doit voir), puis sauvegarder sur GitHub (commit + pull request).
-- Préférer les solutions simples et standards plutôt que les solutions astucieuses.
-- Ne jamais mettre de clé secrète (Stripe, Supabase…) dans le code : elles vont dans `.env.local`
-  (jamais envoyé sur GitHub) et dans les réglages de Vercel.
-- Avant d'écrire du code Next.js, lire la doc embarquée dans `node_modules/next/dist/docs/`
-  (voir `AGENTS.md`) : la version utilisée est récente et diffère parfois des habitudes.
+## 1. Règles de travail pour Claude (à respecter en priorité)
+
+Le porteur du projet (MATEI) débute en développement. Claude doit :
+
+- Toujours répondre et commenter en **français**, expliquer simplement ce qu'il fait et pourquoi
+  (définir chaque mot technique la première fois : « un commit, c'est une sauvegarde du code »).
+- Travailler **une étape à la fois** (plan en section 12), ne jamais faire plusieurs étapes d'un coup.
+- À la fin de chaque étape : expliquer **comment tester** (page à ouvrir, ce qu'on doit voir), puis
+  sauvegarder sur GitHub avec un message clair (commit + pull request).
+- **Ne pas changer de technologie sans demander. Ne pas ajouter de bibliothèque inutile.**
+- Ne jamais écrire de clé secrète dans le code : tout passe par `.env.local` (jamais envoyé sur GitHub)
+  et par les réglages « Environment Variables » de Vercel (cocher Production **et** Preview).
+- Sécuriser la base avec les règles d'accès Supabase (Row Level Security, « RLS ») sur **chaque table**.
+- Écrire un code simple et lisible plutôt que malin.
+- Si quelque chose est flou dans ce cahier des charges, **poser la question avant de coder**.
 - Si une étape demande une action de MATEI (créer un compte, copier une clé…), le dire clairement,
-  avec les étapes cliquables, avant de continuer.
+  avec des liens cliquables.
+- Avant d'écrire du code Next.js, lire la doc embarquée dans `node_modules/next/dist/docs/`
+  (voir `AGENTS.md`) : la version utilisée (Next.js 16) diffère parfois des habitudes.
 
-## 1. Le concept
+## 2. Le concept
 
-Une place de marché « à la BlaBlaCar » qui met en relation :
+Une plateforme qui met en relation :
 
-- **les chercheurs** : futurs acheteurs ou locataires d'un logement, qui veulent savoir à quoi ressemble
-  vraiment la vie dans une rue ou un immeuble (bruit le soir, voisins, humidité, copropriété, sécurité,
-  travaux prévus, ambiance du quartier) ;
-- **les habitants** : des personnes qui vivent déjà dans la rue ou l'immeuble, **vérifiées** (justificatif
-  de domicile), qui gagnent un peu d'argent en racontant ce qu'elles savent.
+- **Les chercheurs** : des gens qui veulent acheter ou louer un logement et savoir à quoi ressemble
+  vraiment la vie dans une rue, un immeuble ou un quartier (bruit, voisins, sécurité, copropriété,
+  humidité, ambiance le soir…).
+- **Les habitants** : des personnes qui vivent déjà dans le quartier, **vérifiées**, rémunérées pour
+  partager ce qu'elles savent.
 
-La plateforme vend **la mise en relation et la confiance** : vérification du domicile, paiement sécurisé
-bloqué jusqu'à la fin de l'échange, avis dans les deux sens.
+Mécanique inspirée de BlaBlaCar : l'habitant publie son offre (comme un conducteur publie un trajet),
+le chercheur cherche par adresse, réserve un créneau, paie en ligne, puis les deux se notent.
 
-Le risque principal : un agent immobilier ou un vendeur qui se fait passer pour un voisin. Toute la valeur
-repose sur la vérification et l'indépendance des habitants.
+## 3. Les types d'utilisateurs
 
-## 2. Offres et prix (indicatifs, réglables par l'habitant dans une fourchette)
+| Rôle | Ce qu'il fait |
+|---|---|
+| Chercheur | Cherche des habitants près d'une adresse, réserve et paie un échange, laisse un avis. Acheteur ou locataire. |
+| Habitant | Crée son profil, envoie un justificatif de domicile, définit ses offres, prix et disponibilités, réalise les échanges, est payé. |
+| Admin (MATEI) | Valide ou refuse les justificatifs, gère les litiges et les signalements, voit les statistiques de base. |
 
-| Offre | Durée | Prix indicatif | Public visé |
+Un même compte peut être à la fois chercheur et habitant.
+
+## 4. Les offres
+
+| Format | Durée | Prix indicatif | Pour qui |
 |---|---|---|---|
-| Appel express | 10 min | 5 à 10 € | Locataires pressés |
-| Appel | 15 min | ~20 € (20 à 40 €) | Acheteurs, locataires |
-| Balade dans le quartier | 45 min | ~40 € | Acheteurs |
-| Visite du soir (entendre le bruit réel vers 22 h) | 30 à 45 min | ~40 € | Acheteurs |
+| Appel téléphonique ou visio (`appel`) | 15 min | 20 € | Acheteurs et locataires |
+| Balade dans le quartier (`balade`) | 45 min | 40 € | Surtout acheteurs |
+| Visite du soir, entendre le bruit réel (`visite_soir`) | 30 min | 35 € | Acheteurs |
+| Réponse écrite à des questions (`question_ecrite`) | Sous 24 h | 8 € | Surtout locataires |
 
-- **Commission de la plateforme : 15 à 20 %** du prix, prélevée automatiquement par Stripe Connect.
-- Plus tard : un « pass recherche » location (15 à 20 € / mois, questions illimitées).
-- Les revenus des habitants doivent être déclarés (comme BlaBlaCar ou Airbnb) : le rappeler dans les CGU.
+L'habitant peut modifier ses prix dans une fourchette fixée par la plateforme.
+**Commission de la plateforme : 20 %** sur chaque échange.
 
-## 3. Parcours utilisateurs
+## 5. Les parcours
 
-### Habitant (comme le conducteur BlaBlaCar qui publie son trajet)
-1. Crée un compte.
-2. Remplit son profil : adresse (rue / immeuble), depuis quand il y habite, courte présentation.
-3. Envoie un justificatif de domicile → statut « en attente » puis « vérifié » (validation manuelle par
-   l'admin en V1).
-4. Choisit ses offres et ses prix, et ses disponibilités (ex. : « mardi soir et week-end »).
-5. Connecte son compte de paiement Stripe pour recevoir l'argent.
-6. Reçoit les réservations, réalise l'échange (téléphone ou lien visio), est payé une fois l'échange terminé.
-7. Note le chercheur.
+### Habitant
+1. S'inscrire (e-mail ou Google), renseigner prénom, photo, téléphone.
+2. Indiquer son adresse (jamais affichée publiquement), son ancienneté et le type de logement.
+3. Envoyer un justificatif de domicile **de moins de 3 mois** (facture d'énergie, quittance, avis de taxe).
+4. Attendre la validation par l'admin. Le profil n'est visible qu'une fois validé.
+5. Choisir ses offres, ses prix et ses disponibilités (créneaux par jour de la semaine).
+6. Connecter son compte bancaire via Stripe pour recevoir les paiements.
+7. Recevoir les demandes, les accepter ou les refuser, réaliser l'échange, être payé, noter le chercheur.
 
-### Chercheur (comme le passager qui cherche un trajet)
-1. Tape l'adresse du logement qui l'intéresse.
-2. Voit la liste des habitants vérifiés dans un rayon d'environ 200 m, **ceux du même immeuble en premier**.
-3. Ouvre un profil : ancienneté, badges, avis, offres et prix.
-4. Choisit une offre et un créneau, paie (l'argent est bloqué).
-5. Reçoit la confirmation, le contact ou le lien visio, et une **checklist de questions** à poser.
-6. Après l'échange : confirme qu'il a eu lieu, note l'habitant. L'argent est alors versé à l'habitant.
+### Chercheur
+1. Saisir l'adresse du logement qui l'intéresse (ou un quartier).
+2. Voir les habitants vérifiés dans un rayon d'environ **300 m**, triés par proximité (**même immeuble
+   puis même rue d'abord**), avec photo, prénom, ancienneté, note moyenne et offres.
+3. Ouvrir un profil, choisir une offre et un créneau.
+4. Créer un compte s'il n'en a pas, puis payer par carte.
+5. Recevoir la confirmation avec le contact (numéro ou lien visio) et une checklist de questions.
+6. Après l'échange : confirmer qu'il a eu lieu et noter l'habitant.
 
-## 4. Périmètre
+## 6. Périmètre de la V1
 
-### Dans la V1
-1. Inscription et connexion (email + mot de passe, ou lien magique).
-2. Profil habitant : adresse, ancienneté, présentation, offres, prix, disponibilités, justificatif.
-3. Recherche par adresse avec la liste des habitants proches (même immeuble en priorité).
-4. Réservation d'un créneau et paiement (Stripe Connect, argent versé après l'échange).
-5. Notes et avis dans les deux sens, après l'échange.
-6. Checklist de questions fournie au chercheur.
-7. Petit espace admin pour valider les justificatifs de domicile.
+### Inclus
+- Inscription / connexion (e-mail + Google).
+- Profil habitant avec justificatif et validation manuelle par l'admin.
+- Offres, prix et disponibilités de l'habitant.
+- Recherche par adresse avec rayon (carte simple + liste).
+- Réservation d'un créneau, paiement en ligne, annulation et remboursement.
+- Notes et avis dans les deux sens.
+- E-mails automatiques : confirmation, rappel la veille, demande d'avis.
+- Checklist de questions affichée au chercheur.
+- Espace admin minimal : justificatifs, liste des réservations, signalements.
+- Site responsive, utilisable comme une app sur téléphone (PWA).
 
-### Plus tard (pas en V1)
-- Appel vidéo intégré (en V1 : numéro de téléphone ou lien visio externe donné après paiement).
-- Chat en temps réel.
-- Abonnement « pass recherche » pour la location.
-- Coller le lien d'une annonce SeLoger / Leboncoin (problèmes juridiques : on garde la saisie d'adresse).
-- Application mobile native (en V1 : site web utilisable comme une app, une « PWA »).
-- Offre B2B (agences, relocateurs d'expatriés, banques).
-- Pages par rue / quartier pour le référencement Google.
+### Exclu (plus tard)
+- Application native iOS / Android.
+- Appel vidéo intégré (en V1 : numéro masqué ou lien de visio externe).
+- Messagerie en temps réel.
+- Coller le lien d'une annonce SeLoger / Leboncoin (problèmes juridiques).
+- Abonnement « pass recherche » pour les locataires.
+- Offre B2B (agences, relocateurs, entreprises).
+- Plusieurs langues.
 
-## 5. Écrans de la V1 (11)
+## 7. Les écrans de la V1
 
-1. **Accueil** : explication du concept + champ « Quelle adresse vous intéresse ? ».
-2. **Inscription / connexion**.
-3. **Choix du rôle** : « Je cherche un logement » ou « J'habite ici et je veux aider » (un compte peut
-   avoir les deux).
-4. **Résultats de recherche** : habitants proches, même immeuble en premier, distance, badges, prix.
-5. **Profil public d'un habitant** : présentation, ancienneté, badges, avis, offres.
-6. **Réservation** : choix de l'offre et du créneau, récapitulatif, paiement.
-7. **Confirmation** : contact / lien visio + checklist de questions.
-8. **Mon tableau de bord** : mes réservations (à venir, passées), statut des paiements.
-9. **Mon profil habitant (édition)** : adresse, offres, prix, disponibilités, justificatif, connexion Stripe.
-10. **Laisser un avis** : note sur 5 + commentaire.
-11. **Admin** : liste des justificatifs à valider / refuser.
+| # | Écran | Contenu |
+|---|---|---|
+| 1 | Accueil | Accroche, recherche d'adresse, « comment ça marche » en 3 étapes, bouton « Devenir habitant ». |
+| 2 | Résultats | Carte + liste des habitants proches, filtres (type d'offre, prix, note). |
+| 3 | Profil habitant (public) | Photo, prénom, ancienneté, badges, description, offres et prix, avis, bouton « Réserver ». |
+| 4 | Réservation | Offre et créneau, adresse du bien concerné, récapitulatif, paiement. |
+| 5 | Confirmation | Détails, contact, checklist de questions, bouton « Ajouter au calendrier ». |
+| 6 | Mes réservations | À venir / passées, annulation, confirmer que l'échange a eu lieu, laisser un avis. |
+| 7 | Devenir habitant | Formulaire en étapes : infos, adresse, justificatif, offres, disponibilités, compte bancaire. |
+| 8 | Tableau de bord habitant | Demandes reçues, agenda, gains, avis, modification des offres. |
+| 9 | Compte | Infos personnelles, mot de passe, suppression du compte (RGPD). |
+| 10 | Admin | Justificatifs à valider, réservations, litiges, signalements. |
+| 11 | Pages légales | CGU, politique de confidentialité, mentions légales, FAQ. |
 
-## 6. Modèle de données (Supabase / PostgreSQL)
+## 8. Modèle de données (Supabase / PostgreSQL)
 
-- `profiles` : id (lié au compte), prénom, photo, téléphone, rôle(s), date de création.
-- `residents` : profile_id, adresse, numéro d'immeuble, latitude, longitude, habite_depuis,
-  présentation, statut_verification (`en_attente` / `verifie` / `refuse`), stripe_account_id.
-- `proof_documents` : resident_id, chemin du fichier (stockage privé), date d'envoi, statut, note admin.
-- `offers` : resident_id, type (`appel_express` / `appel` / `balade` / `visite_soir`), durée, prix (en
-  centimes), actif.
-- `availabilities` : resident_id, jour de la semaine, heure début, heure fin.
-- `bookings` : offer_id, seeker_id, resident_id, créneau, adresse visée, statut (`en_attente_paiement` /
-  `payee` / `realisee` / `annulee` / `litige`), montant, commission, stripe_payment_intent_id.
-- `reviews` : booking_id, auteur, cible, note (1 à 5), commentaire, date.
-- Badges calculés (pas de table) : « Domicile vérifié », « Habitant depuis 5 ans + »,
-  « Réponses jugées honnêtes » (bonne moyenne d'avis).
+Les tables sont décrites en SQL dans `supabase/migrations/`, un fichier par changement, à exécuter
+**dans l'ordre** dans Supabase > SQL Editor. Ne jamais modifier un fichier déjà exécuté : en ajouter un.
+Noms de tables et colonnes en anglais dans le code ; correspondance avec le Google Doc :
 
-Détails techniques (choisis à l'étape 2) :
-- Les tables sont décrites en SQL dans `supabase/migrations/` (un fichier par changement, à exécuter
-  dans l'ordre dans Supabase > SQL Editor). Ne jamais modifier un fichier déjà exécuté : en ajouter un.
-- `residents` est **privée** (adresse exacte, contact) : seuls l'habitant et l'admin la lisent. Les
-  chercheurs passent par la fonction `search_residents(lat, lng, building_key, rayon)`, qui renvoie
-  seulement prénom, ancienneté, présentation, « même immeuble » et une distance arrondie à 50 m.
-- Le téléphone / lien visio est dans `residents.contact_info` (pas dans `profiles`).
-- Un utilisateur ne peut pas se nommer admin, ni se déclarer « vérifié », ni changer son
-  `stripe_account_id` : ces colonnes ne sont modifiables que par l'admin ou le serveur.
-- Les réservations (`bookings`) ne sont jamais écrites depuis le navigateur : seulement par le serveur
-  (avec Stripe, étape 10).
+| Google Doc | Table | Champs principaux |
+|---|---|---|
+| profiles | `profiles` | id, first_name, last_name (privé), avatar_url, is_seeker, is_resident, is_admin, created_at |
+| habitants | `residents` | profile_id, address_label (privée), building_key, street_name, neighborhood, city, location (lat/lng PostGIS), move_in_year, housing_type, bio, contact_info (téléphone / lien visio, privé), not_agent_confirmed, verification_status (`en_attente` / `verifie` / `refuse`), stripe_account_id |
+| (lien du justificatif) | `proof_documents` | resident_id, file_path (stockage privé), status, admin_note, created_at |
+| offres | `offers` | resident_id, type (`appel` / `balade` / `visite_soir` / `question_ecrite`), duration_minutes, price_cents, active |
+| disponibilites | `availabilities` | resident_id, weekday (1 = lundi … 7 = dimanche), start_time, end_time |
+| reservations | `bookings` | seeker_id, offer_id, resident_id, starts_at, target_address, status (`en_attente` / `confirmee` / `terminee` / `annulee` / `litige`), amount_cents, commission_cents, stripe_payment_intent_id |
+| avis | `reviews` | booking_id, author_id, target_id, rating (1 à 5), comment, created_at |
+| signalements | `reports` | author_id, target_id, booking_id, reason, status (`ouvert` / `en_cours` / `traite`) |
+
+Règles d'accès déjà en place :
+- `residents` est **privée** : seuls l'habitant et l'admin la lisent. Les chercheurs passent par la
+  fonction `search_residents(lat, lng, building_key, street_name, rayon = 300)`, qui renvoie seulement
+  prénom, photo, année d'emménagement, type de logement, description, **nom de la rue**, « même
+  immeuble », « même rue », une **distance arrondie à 50 m**, la note moyenne et le nombre d'avis.
+- `profiles` n'est lisible que par soi-même et l'admin ; la vue `public_profiles` expose seulement
+  prénom et photo.
+- Personne ne peut se nommer admin, se déclarer « vérifié » ou changer son `stripe_account_id`.
+- La fiche habitant ne peut pas être créée sans cocher « je ne suis pas l'agent, le vendeur ou le
+  propriétaire du bien » (`not_agent_confirmed`).
+- `bookings` n'est jamais écrite depuis le navigateur : seulement par le serveur (avec Stripe).
+- Un avis n'est possible qu'après un échange `terminee`, sur l'autre participant.
 - Page `/statut` : vérifie que le site parle bien à la base de données.
 
-Recherche « à 200 m » : géocodage de l'adresse avec l'API Adresse du gouvernement (gratuite,
-api-adresse.data.gouv.fr), puis calcul de distance (extension PostGIS de Supabase).
+Badges (calculés, pas de table) : « Domicile vérifié », « Habitant depuis 5 ans ou plus »,
+« Très bien noté ».
 
-## 7. Paiements (Stripe Connect)
+## 9. Paiements (Stripe Connect)
 
-- Chaque habitant a un compte Stripe Connect (type Express) qu'il crée depuis son profil.
-- Le chercheur paie à la réservation. L'argent est conservé par Stripe (pas par nous : ça évite les
-  problèmes réglementaires liés au fait de détenir l'argent des autres).
-- Une fois l'échange confirmé (ou automatiquement 48 h après le créneau sans litige), le paiement est
-  versé à l'habitant, **moins la commission** (15 à 20 %).
-- Annulation par le chercheur plus de 24 h avant : remboursement. Annulation par l'habitant : toujours
-  remboursé.
-- Les événements Stripe (paiement réussi, etc.) sont reçus par un « webhook » (une adresse de notre site
-  que Stripe appelle).
+- Comptes **Stripe Connect Express** pour les habitants.
+- Le chercheur paie à la réservation, la plateforme garde l'argent (via Stripe).
+- Une fois l'échange confirmé (par le chercheur, ou automatiquement **48 h après le créneau** sans
+  litige), l'habitant reçoit **80 %**, la plateforme garde **20 %**.
+- Annulation par le chercheur **plus de 24 h avant** : remboursement total. **Moins de 24 h avant** :
+  pas de remboursement (l'habitant est payé).
+- Annulation ou absence de l'habitant : remboursement total du chercheur.
+- **Mode test Stripe pendant tout le développement.**
+- Les événements Stripe (paiement réussi…) arrivent par un « webhook » (adresse de notre site que
+  Stripe appelle).
 
-## 8. Sécurité et RGPD
+## 10. Confiance, sécurité et RGPD
 
-- Les justificatifs de domicile sont des **données sensibles** : stockage privé dans Supabase, visibles
-  uniquement par l'habitant concerné et l'admin, supprimés après vérification (on garde juste le statut).
-- Règles d'accès Supabase (« RLS ») activées sur toutes les tables : chacun ne voit et ne modifie que
-  ce qui le concerne.
-- L'adresse exacte d'un habitant n'est **jamais affichée** : on montre seulement « même immeuble » ou la
-  distance approximative.
-- Le téléphone / lien visio n'est donné qu'après paiement.
-- Pages légales à prévoir avant le lancement : CGU, politique de confidentialité, mentions légales.
-- Signalement d'un faux voisin (agent, vendeur) possible depuis un profil.
+- Domicile vérifié manuellement par l'admin pour chaque habitant.
+- Justificatifs stockés dans un espace **privé** (admin seulement), **supprimés après validation**.
+- L'adresse exacte n'est jamais affichée : seulement le nom de la rue et une distance approximative.
+- Le téléphone n'est partagé qu'après paiement confirmé.
+- Notes dans les deux sens, visibles sur les profils.
+- Bouton de signalement sur chaque profil et chaque réservation.
+- Case obligatoire : l'habitant n'est pas l'agent immobilier, le vendeur ou le propriétaire du bien.
+- Suppression du compte possible depuis la page Compte (RGPD).
+- Aucun mot de passe ni clé secrète dans ce dépôt ni dans un document partagé.
 
-## 9. Outils techniques
+## 11. Choix techniques
 
-- **Next.js** (App Router, TypeScript, Tailwind CSS) : le site.
-- **Supabase** : base de données, comptes utilisateurs, stockage des fichiers.
-- **Stripe Connect** : paiements entre chercheurs et habitants.
-- **Vercel** : mise en ligne, reliée à GitHub.
-- **API Adresse (data.gouv.fr)** : transformer une adresse en coordonnées GPS.
+| Brique | Outil |
+|---|---|
+| Framework web | Next.js 16 (App Router) + TypeScript |
+| Interface | Tailwind CSS + composants shadcn/ui (à ajouter quand on construit les formulaires) |
+| Base, comptes, stockage | Supabase (Postgres + Auth + Storage) + PostGIS pour le rayon |
+| Paiements | Stripe Connect |
+| Carte et adresses | API Adresse (adresse.data.gouv.fr) pour l'autocomplétion, Leaflet + OpenStreetMap pour la carte |
+| E-mails | Resend |
+| Hébergement | Vercel, relié au dépôt GitHub `Mateidc64/demande-un-besoin` |
+
+Site en ligne : https://demande-un-besoin.vercel.app. Supabase est hébergé en Europe (Irlande).
 
 Commandes utiles :
-- `npm install` : installer les dépendances (une seule fois, ou après un changement).
+- `npm install` : installer les dépendances.
 - `npm run dev` : lancer le site en local sur http://localhost:3000.
 - `npm run build` : vérifier que le site se construit sans erreur.
 - `npm run lint` : vérifier la qualité du code.
 
-## 10. Organisation du code
+Organisation du code :
+- `src/app/` : les pages (un dossier = une adresse du site, ex. `src/app/compte/page.tsx` → `/compte`).
+- `src/components/` : morceaux d'interface réutilisables.
+- `src/lib/` : code utilitaire (`src/lib/supabase/` pour la connexion à la base).
+- `src/proxy.ts` : s'exécute avant chaque page, garde la connexion Supabase à jour.
 
-- `src/app/` : les pages (un dossier = une adresse du site, ex. `src/app/recherche/page.tsx` → `/recherche`).
-- `src/components/` : les morceaux d'interface réutilisables.
-- `src/lib/` : le code utilitaire (connexion Supabase, Stripe, géocodage).
-- Textes de l'interface en français. Noms de variables et de fichiers en anglais ou français simple,
-  mais cohérents.
+## 12. Plan de développement
 
-## 11. Plan d'étapes (0 à 12)
+| Étape | Objectif | Résultat à tester | État |
+|---|---|---|---|
+| 0 | Installation | Projet Next.js relié à GitHub et Vercel, page d'accueil en ligne. | ✅ |
+| 1 | Base de données | Projet Supabase, tables du modèle, règles d'accès actives. | ✅ (2 fichiers SQL) |
+| 2 | Comptes | Inscription, connexion (e-mail + Google), déconnexion, page Compte. | à faire |
+| 3 | Devenir habitant | Formulaire en étapes, envoi du justificatif, profil « en attente ». | |
+| 4 | Admin | Page admin pour valider ou refuser les habitants. | |
+| 5 | Offres et disponibilités | L'habitant crée ses offres, ses prix et ses créneaux. | |
+| 6 | Recherche | Autocomplétion d'adresse, carte + liste des habitants dans le rayon. | |
+| 7 | Profil public | Page profil habitant avec offres et avis. | |
+| 8 | Réservation | Choix du créneau, création de la réservation, tableau de bord habitant. | |
+| 9 | Paiement | Stripe Connect en mode test : paiement, versement, remboursement. | |
+| 10 | Avis et e-mails | Notes dans les deux sens, e-mails de confirmation, rappel, demande d'avis. | |
+| 11 | Finitions | Pages légales, mobile soigné, PWA, page d'accueil finale. | |
+| 12 | Lancement test | Stripe en mode réel, lancement sur un seul quartier pilote. | |
 
-0. **Squelette** : projet Next.js qui démarre, page d'accueil simple en français. ✅
-1. **Mise en ligne** : brancher le dépôt sur Vercel pour avoir une adresse publique. ✅ https://demande-un-besoin.vercel.app
-2. **Supabase** : créer le projet, brancher les clés, tables de base. (en cours)
-3. **Inscription / connexion**.
-4. **Choix du rôle et profil de base**.
-5. **Profil habitant** : adresse (géocodage), ancienneté, présentation.
-6. **Justificatif de domicile + espace admin** de validation.
-7. **Offres, prix et disponibilités**.
-8. **Recherche par adresse** : habitants proches, même immeuble en premier.
-9. **Profil public d'un habitant**.
-10. **Réservation + paiement Stripe Connect** (argent versé après l'échange).
-11. **Confirmation, checklist de questions, tableau de bord**.
-12. **Avis dans les deux sens + pages légales**, puis lancement sur un quartier test.
+## 13. Décisions et écarts
 
-En parallèle du code : une page de présentation sur un seul quartier et le recrutement manuel de
-10 à 50 habitants (affiches dans les halls, groupes Facebook du quartier).
+- Le dépôt s'appelle `demande-un-besoin` (le nom de l'app reste « Demande à un voisin »).
+- Le téléphone / lien visio est dans `residents.contact_info` et pas dans `profiles`, pour qu'il ne
+  soit jamais lisible avant paiement.
+- Le justificatif est dans une table à part (`proof_documents`) plutôt qu'un simple lien dans
+  `residents` : ça garde l'historique des envois et la note de l'admin, et permet de supprimer le
+  fichier après validation en gardant le statut.
+- Le type d'offre `appel_express` existe encore dans la base (créé avant l'alignement sur le Google
+  Doc) mais n'est pas utilisé.
+- Le statut de réservation `en_attente` couvre « demande envoyée, en attente d'acceptation et de
+  paiement ».
+
+## 14. Points juridiques avant le lancement
+
+- CGU et politique de confidentialité (RGPD), notamment pour les justificatifs.
+- Informer les habitants sur la déclaration de leurs revenus (la plateforme transmet certaines
+  informations aux impôts, comme Airbnb ou BlaBlaCar).
+- Statut juridique (micro-entreprise ou société) avant d'encaisser de vrais paiements.
+- Faire relire les CGU par un professionnel.
+
+## 15. Marché de lancement
+
+Un seul quartier très demandé (ex. un arrondissement de Paris ou de Lyon). Objectif avant d'ouvrir
+aux chercheurs : 30 à 50 habitants vérifiés recrutés à la main (affiches dans les halls, groupes
+Facebook de quartier, bouche-à-oreille).
