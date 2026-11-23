@@ -66,6 +66,7 @@ function BookingCard({ b, now, reviewed }: { b: Booking; now: number; reviewed: 
   const lessThan24h = startsAt - now < 24 * 3600 * 1000;
   const note = moneyNote(b);
 
+  const canMessage = b.paid && b.status !== "annulee";
   const canPay = isSeeker && b.payment_open;
   const canRespond = !isSeeker && b.status === "en_attente" && b.paid;
   const canConfirm = isSeeker && b.status === "confirmee" && isPast;
@@ -106,6 +107,11 @@ function BookingCard({ b, now, reviewed }: { b: Booking; now: number; reviewed: 
         </p>
       )}
       <div className="mt-3 flex flex-wrap gap-2">
+        {canMessage && (
+          <Link href={`/messages/${b.booking_id}`} className={`${BUTTON} border border-contour text-nuit`}>
+            💬 Messages
+          </Link>
+        )}
         {canPay && (
           <form action={payBooking}>
             <input type="hidden" name="booking_id" value={b.booking_id} />

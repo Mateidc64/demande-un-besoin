@@ -332,3 +332,10 @@ Facebook de quartier, bouche-à-oreille).
   `src/components/site-footer.tsx`). Les pages légales sont une **version de travail** : les passages
   surlignés `[…]` (éditeur, SIRET, contact, médiateur, durées de conservation, rétractation) sont à
   compléter, puis à faire relire par un professionnel avant le lancement.
+
+- Messagerie chercheur ↔ habitant : une conversation par réservation, ouverte dès que la réservation
+  est payée (fermée si annulée). Page `/messages/[bookingId]`, bouton « 💬 Messages » dans Mes
+  réservations. Table `messages` (lecture : les deux participants et l'admin ; écriture seulement via
+  `send_message()`). **Pas de temps réel en V1** : la page se recharge toute seule toutes les 15 s.
+  E-mail « Nouveau message » à l'autre personne, au plus un toutes les 30 min par conversation
+  (`claim_message_email`).
