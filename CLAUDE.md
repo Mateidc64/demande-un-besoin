@@ -333,9 +333,15 @@ Facebook de quartier, bouche-à-oreille).
   surlignés `[…]` (éditeur, SIRET, contact, médiateur, durées de conservation, rétractation) sont à
   compléter, puis à faire relire par un professionnel avant le lancement.
 
-- Messagerie chercheur ↔ habitant : une conversation par réservation, ouverte dès que la réservation
-  est payée (fermée si annulée). Page `/messages/[bookingId]`, bouton « 💬 Messages » dans Mes
-  réservations. Table `messages` (lecture : les deux participants et l'admin ; écriture seulement via
-  `send_message()`). **Pas de temps réel en V1** : la page se recharge toute seule toutes les 15 s.
-  E-mail « Nouveau message » à l'autre personne, au plus un toutes les 30 min par conversation
-  (`claim_message_email`).
+- Messagerie chercheur ↔ habitant (comme BlaBlaCar) : **une conversation par couple chercheur +
+  habitant**, possible **avant toute réservation** (bouton « 💬 Poser une question » sur le profil
+  public) et réutilisée après (bouton « 💬 Messages » de Mes réservations, qui redirige vers la même
+  conversation). Pages `/messages` (liste, lien « Messages » dans le menu du haut) et `/messages/[id]`.
+  Tables `conversations` et `conversation_messages` (lecture : les deux participants et l'admin ;
+  écriture seulement via `start_conversation()` et `send_conversation_message()`). Les numéros de
+  téléphone (8 chiffres ou plus), e-mails et liens sont **masqués par la base** (`mask_contacts()`) :
+  le contact de l'habitant n'est donné qu'après une réservation acceptée. **Pas de temps réel en V1** :
+  la page se recharge toute seule toutes les 15 s. E-mail « Nouveau message » à l'autre personne, au
+  plus un toutes les 30 min par conversation (`claim_conversation_email`). La première version
+  (table `messages`, une conversation par réservation) n'est plus utilisée : elle reste en base, vide,
+  sans accès (pas de DROP).
