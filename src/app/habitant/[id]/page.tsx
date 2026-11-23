@@ -1,4 +1,5 @@
 // Page /habitant/[id] : le profil public d'un habitant vérifié.
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { OFFERS, WEEKDAYS, residentShare, type OfferType } from "@/lib/offres";
@@ -34,7 +35,7 @@ async function Profile({ params }: { params: Promise<{ id: string }> }) {
   if (!profile) notFound();
 
   const [{ data: offers }, { data: slots }, { data: reviews }] = await Promise.all([
-    supabase.from("offers").select("type, price_cents").eq("resident_id", id).eq("active", true).order("price_cents"),
+    supabase.from("offers").select("id, type, price_cents").eq("resident_id", id).eq("active", true).order("price_cents"),
     supabase.from("availabilities").select("weekday, start_time, end_time").eq("resident_id", id).order("weekday").order("start_time"),
     supabase.rpc("reviews_for_profile", { p_profile_id: profile.profile_id }),
   ]);
@@ -99,13 +100,12 @@ async function Profile({ params }: { params: Promise<{ id: string }> }) {
                   </div>
                   <div className="text-right">
                     <p className="text-lg font-bold">{o.price_cents / 100} €</p>
-                    <button
-                      disabled
-                      title="La réservation arrive à la prochaine étape"
-                      className="mt-1 rounded-lg bg-emerald-600 px-4 py-1.5 text-sm font-semibold text-white opacity-50"
+                    <Link
+                      href={`/reserver/${o.id}`}
+                      className="mt-1 inline-block rounded-lg bg-emerald-600 px-4 py-1.5 text-sm font-semibold text-white hover:bg-emerald-700"
                     >
                       Réserver
-                    </button>
+                    </Link>
                   </div>
                 </li>
               );

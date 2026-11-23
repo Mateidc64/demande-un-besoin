@@ -250,8 +250,8 @@ Organisation du code :
 | 4 | Admin | Page admin pour valider ou refuser les habitants. | ✅ |
 | 5 | Offres et disponibilités | L'habitant crée ses offres, ses prix et ses créneaux. | ✅ |
 | 6 | Recherche | Autocomplétion d'adresse, carte + liste des habitants dans le rayon. | ✅ |
-| 7 | Profil public | Page profil habitant avec offres et avis. | en cours |
-| 8 | Réservation | Choix du créneau, création de la réservation, tableau de bord habitant. | |
+| 7 | Profil public | Page profil habitant avec offres et avis. | ✅ |
+| 8 | Réservation | Choix du créneau, création de la réservation, tableau de bord habitant. | en cours |
 | 9 | Paiement | Stripe Connect en mode test : paiement, versement, remboursement. | |
 | 10 | Avis et e-mails | Notes dans les deux sens, e-mails de confirmation, rappel, demande d'avis. | |
 | 11 | Finitions | Pages légales, mobile soigné, PWA, page d'accueil finale. | |
@@ -289,3 +289,4 @@ Organisation du code :
 Un seul quartier très demandé (ex. un arrondissement de Paris ou de Lyon). Objectif avant d'ouvrir
 aux chercheurs : 30 à 50 habitants vérifiés recrutés à la main (affiches dans les halls, groupes
 Facebook de quartier, bouche-à-oreille).
+- Réservations (étape 8) : créneaux de 30 min calculés par `available_slots()` (heure de Paris, au moins 2 h à l'avance, sans chevauchement). Création via `create_booking()`, réponse de l'habitant via `respond_booking()`, annulation via `cancel_booking()`, liste via `my_bookings()`. Le contact de l'habitant n'est montré au chercheur qu'une fois la réservation confirmée ; à l'étape 9 ce sera après paiement.
