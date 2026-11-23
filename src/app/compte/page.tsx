@@ -23,7 +23,7 @@ async function AccountContent() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("first_name, last_name")
+    .select("first_name, last_name, is_admin")
     .eq("id", user.id)
     .single();
 
@@ -35,6 +35,12 @@ async function AccountContent() {
       <p className="text-zinc-600 dark:text-zinc-400">
         Connecté avec <strong>{user.email}</strong>
       </p>
+
+      {profile?.is_admin && (
+        <Link href="/admin" className="font-medium text-emerald-700 underline">
+          Espace admin : habitants à vérifier
+        </Link>
+      )}
 
       <Link href="/devenir-habitant" className="font-medium text-emerald-700 underline">
         Devenir habitant (ou voir l&apos;état de ma demande)
