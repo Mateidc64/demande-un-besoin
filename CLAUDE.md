@@ -165,6 +165,12 @@ Règles d'accès déjà en place :
   par habitant et par type) ; les disponibilités sont remplacées en entier à chaque enregistrement.
 - Exécution du SQL : MATEI a branché le connecteur Supabase dans la conversation principale du projet ;
   les nouveaux fichiers SQL lui sont transmis pour qu'elle les applique.
+- Recherche : page `/recherche?adresse=…&lat=…&lng=…&rue=…&immeuble=…` (+ filtres `offre`, `prixmax`,
+  `notemin`). La carte (Leaflet + OpenStreetMap, chargée seulement dans le navigateur) montre l'adresse
+  recherchée et le cercle de 300 m, **jamais la position des habitants**. Un habitant sans offre active
+  n'apparaît pas dans les résultats.
+- Les offres sont lisibles par tous si l'habitant est vérifié, via la fonction `resident_is_verified()`
+  (la table `residents` étant privée, une règle qui la lirait directement ne verrait rien).
 - Suppression du compte : fonction `delete_my_account()` (chacun ne peut supprimer que le sien). Elle est
   refusée si des réservations ou des avis sont liés au compte : l'admin s'en occupe alors à la main.
 
@@ -236,8 +242,8 @@ Organisation du code :
 | 2 | Comptes | Inscription, connexion (e-mail + Google), déconnexion, page Compte. | ✅ |
 | 3 | Devenir habitant | Formulaire en étapes, envoi du justificatif, profil « en attente ». | ✅ |
 | 4 | Admin | Page admin pour valider ou refuser les habitants. | ✅ |
-| 5 | Offres et disponibilités | L'habitant crée ses offres, ses prix et ses créneaux. | en cours |
-| 6 | Recherche | Autocomplétion d'adresse, carte + liste des habitants dans le rayon. | |
+| 5 | Offres et disponibilités | L'habitant crée ses offres, ses prix et ses créneaux. | ✅ |
+| 6 | Recherche | Autocomplétion d'adresse, carte + liste des habitants dans le rayon. | en cours |
 | 7 | Profil public | Page profil habitant avec offres et avis. | |
 | 8 | Réservation | Choix du créneau, création de la réservation, tableau de bord habitant. | |
 | 9 | Paiement | Stripe Connect en mode test : paiement, versement, remboursement. | |
