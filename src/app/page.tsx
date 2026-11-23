@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <main className="flex flex-1 flex-col items-center justify-center px-6 py-16">
@@ -30,6 +32,19 @@ export default function Home() {
           </button>
         </form>
         <p className="mt-3 text-sm text-zinc-500">Bientôt disponible.</p>
+
+        <div className="mt-12 rounded-xl border border-zinc-200 p-6 dark:border-zinc-800">
+          <p className="font-semibold">Tu habites un quartier recherché ?</p>
+          <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+            Partage ce que tu sais et sois rémunéré pour chaque échange.
+          </p>
+          <Link
+            href="/devenir-habitant"
+            className="mt-4 inline-block rounded-lg bg-emerald-600 px-5 py-2.5 font-semibold text-white hover:bg-emerald-700"
+          >
+            Devenir habitant
+          </Link>
+        </div>
       </div>
     </main>
   );

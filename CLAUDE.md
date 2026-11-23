@@ -150,6 +150,12 @@ Règles d'accès déjà en place :
 - `bookings` n'est jamais écrite depuis le navigateur : seulement par le serveur (avec Stripe).
 - Un avis n'est possible qu'après un échange `terminee`, sur l'autre participant.
 - Page `/statut` : vérifie que le site parle bien à la base de données.
+- Fichiers (Supabase Storage) : bucket privé `justificatifs` (dossier = id de la personne ; lecture par
+  elle et l'admin, suppression par l'admin), bucket public `avatars` pour les photos de profil. Les
+  fichiers sont envoyés directement depuis le navigateur, puis l'action serveur enregistre leur chemin.
+- Adresses : service officiel de la Géoplateforme (`data.geopf.fr/geocodage`, successeur de
+  api-adresse.data.gouv.fr), appelé depuis le navigateur (`src/lib/adresse.ts`). L'identifiant de
+  l'adresse sert de `building_key` (« même immeuble »), l'arrondissement de `neighborhood`.
 - Suppression du compte : fonction `delete_my_account()` (chacun ne peut supprimer que le sien). Elle est
   refusée si des réservations ou des avis sont liés au compte : l'admin s'en occupe alors à la main.
 
@@ -218,8 +224,8 @@ Organisation du code :
 |---|---|---|---|
 | 0 | Installation | Projet Next.js relié à GitHub et Vercel, page d'accueil en ligne. | ✅ |
 | 1 | Base de données | Projet Supabase, tables du modèle, règles d'accès actives. | ✅ (2 fichiers SQL) |
-| 2 | Comptes | Inscription, connexion (e-mail + Google), déconnexion, page Compte. | en cours |
-| 3 | Devenir habitant | Formulaire en étapes, envoi du justificatif, profil « en attente ». | |
+| 2 | Comptes | Inscription, connexion (e-mail + Google), déconnexion, page Compte. | ✅ |
+| 3 | Devenir habitant | Formulaire en étapes, envoi du justificatif, profil « en attente ». | en cours |
 | 4 | Admin | Page admin pour valider ou refuser les habitants. | |
 | 5 | Offres et disponibilités | L'habitant crée ses offres, ses prix et ses créneaux. | |
 | 6 | Recherche | Autocomplétion d'adresse, carte + liste des habitants dans le rayon. | |
@@ -240,8 +246,12 @@ Organisation du code :
   fichier après validation en gardant le statut.
 - Le type d'offre `appel_express` existe encore dans la base (créé avant l'alignement sur le Google
   Doc) mais n'est pas utilisé.
-- Étape 2 : pas encore de « mot de passe oublié » (à ajouter en finitions), et les formulaires sont
-  en Tailwind simple ; shadcn/ui sera ajouté au formulaire en étapes « Devenir habitant ».
+- Étape 2 : pas encore de « mot de passe oublié » (à ajouter en finitions).
+- Les formulaires sont en Tailwind simple pour l'instant : shadcn/ui n'a pas encore été ajouté (pas
+  indispensable jusqu'ici, à décider avec MATEI avant de l'installer).
+- Étape 3 : le téléphone saisi dans « Devenir habitant » est rangé dans `residents.contact_info`. Les
+  coordonnées GPS viennent de l'adresse choisie dans le navigateur ; l'admin vérifie que le justificatif
+  correspond bien à l'adresse déclarée.
 - Le statut de réservation `en_attente` couvre « demande envoyée, en attente d'acceptation et de
   paiement ».
 
