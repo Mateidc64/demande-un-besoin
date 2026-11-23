@@ -309,3 +309,6 @@ Facebook de quartier, bouche-à-oreille).
 - Un habitant ne peut être réservé qu'après avoir connecté son compte bancaire
   (`residents.stripe_ready`, page `/mes-offres`). `my_bookings()` est remplacée par
   `bookings_overview()` (elle reste en base, sans DROP).
+- Menu du haut : onglet « Habitant » → `/espace-habitant`, qui redirige vers `/devenir-habitant` (pas encore
+  habitant, demande en attente ou refusée : la page montre l'état) ou vers `/mes-offres` (« Espace habitant »)
+  si l'habitant est vérifié. Le lien « Devenir habitant » reste aussi dans « Mon compte ».
