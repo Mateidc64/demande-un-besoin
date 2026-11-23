@@ -5,7 +5,7 @@ import { useState, useTransition } from "react";
 import type { AddressSuggestion } from "@/lib/adresse";
 import { createClient } from "@/lib/supabase/client";
 import { submitResidentApplication } from "./actions";
-import { AddressField } from "./address-field";
+import { AddressField } from "@/components/address-field";
 import {
   AVATAR_MAX_BYTES,
   AVATAR_TYPES,

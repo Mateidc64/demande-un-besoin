@@ -8,10 +8,12 @@ export function AddressField({
   value,
   onChange,
   inputClass,
+  placeholder = "Ex. : 12 rue de la Paix, Paris",
 }: {
   value: AddressSuggestion | null;
   onChange: (address: AddressSuggestion | null) => void;
   inputClass: string;
+  placeholder?: string;
 }) {
   const [query, setQuery] = useState(value?.label ?? "");
   const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([]);
@@ -37,7 +39,7 @@ export function AddressField({
           setQuery(e.target.value);
           onChange(null);
         }}
-        placeholder="Ex. : 12 rue de la Paix, Paris"
+        placeholder={placeholder}
         autoComplete="off"
         className={inputClass}
       />
