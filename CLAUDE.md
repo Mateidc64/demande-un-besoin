@@ -150,6 +150,8 @@ Règles d'accès déjà en place :
 - `bookings` n'est jamais écrite depuis le navigateur : seulement par le serveur (avec Stripe).
 - Un avis n'est possible qu'après un échange `terminee`, sur l'autre participant.
 - Page `/statut` : vérifie que le site parle bien à la base de données.
+- Suppression du compte : fonction `delete_my_account()` (chacun ne peut supprimer que le sien). Elle est
+  refusée si des réservations ou des avis sont liés au compte : l'admin s'en occupe alors à la main.
 
 Badges (calculés, pas de table) : « Domicile vérifié », « Habitant depuis 5 ans ou plus »,
 « Très bien noté ».
@@ -204,6 +206,11 @@ Organisation du code :
 - `src/components/` : morceaux d'interface réutilisables.
 - `src/lib/` : code utilitaire (`src/lib/supabase/` pour la connexion à la base).
 - `src/proxy.ts` : s'exécute avant chaque page, garde la connexion Supabase à jour.
+- `src/components/site-header.tsx` : barre du haut (« Se connecter » / « Mon compte »).
+- Pages de compte : `/connexion` (connexion + inscription + Google), `/auth/callback` (retour après le
+  lien de confirmation par e-mail ou Google), `/compte`.
+- Avec Next.js 16 (« Cache Components »), toute partie de page qui lit la connexion de l'utilisateur
+  doit être dans un `<Suspense>`.
 
 ## 12. Plan de développement
 
@@ -211,7 +218,7 @@ Organisation du code :
 |---|---|---|---|
 | 0 | Installation | Projet Next.js relié à GitHub et Vercel, page d'accueil en ligne. | ✅ |
 | 1 | Base de données | Projet Supabase, tables du modèle, règles d'accès actives. | ✅ (2 fichiers SQL) |
-| 2 | Comptes | Inscription, connexion (e-mail + Google), déconnexion, page Compte. | à faire |
+| 2 | Comptes | Inscription, connexion (e-mail + Google), déconnexion, page Compte. | en cours |
 | 3 | Devenir habitant | Formulaire en étapes, envoi du justificatif, profil « en attente ». | |
 | 4 | Admin | Page admin pour valider ou refuser les habitants. | |
 | 5 | Offres et disponibilités | L'habitant crée ses offres, ses prix et ses créneaux. | |
@@ -233,6 +240,8 @@ Organisation du code :
   fichier après validation en gardant le statut.
 - Le type d'offre `appel_express` existe encore dans la base (créé avant l'alignement sur le Google
   Doc) mais n'est pas utilisé.
+- Étape 2 : pas encore de « mot de passe oublié » (à ajouter en finitions), et les formulaires sont
+  en Tailwind simple ; shadcn/ui sera ajouté au formulaire en étapes « Devenir habitant ».
 - Le statut de réservation `en_attente` couvre « demande envoyée, en attente d'acceptation et de
   paiement ».
 
