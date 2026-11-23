@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { HomeSearch } from "@/components/home-search";
+import { RecruitResidents } from "@/components/recruit-residents";
 import { StreetIllustration } from "@/components/street-illustration";
 
 // « Comment ça marche » en 3 étapes, avec un petit dessin au trait pour chacune.
@@ -161,20 +161,7 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="mt-14 w-full max-w-2xl">
-        <div className="rounded-2xl bg-nuit p-6 text-white">
-          <p className="text-lg font-bold">Tu habites un quartier recherché ?</p>
-          <p className="mt-1 text-sm text-brume">
-            Partage ce que tu sais et sois rémunéré pour chaque échange.
-          </p>
-          <Link
-            href="/devenir-habitant"
-            className="mt-4 inline-block rounded-xl bg-white px-5 py-3 font-bold text-nuit hover:bg-voisin-pale"
-          >
-            Devenir habitant
-          </Link>
-        </div>
-      </div>
+      <RecruitResidents />
     </main>
   );
 }
