@@ -161,7 +161,9 @@ async function Results({ searchParams }: { searchParams: Promise<Params> }) {
                     </div>
                   )}
                   <div className="flex-1">
-                    <p className="font-semibold">{r.first_name}</p>
+                    <Link href={`/habitant/${r.resident_id}`} className="font-semibold hover:underline">
+                      {r.first_name}
+                    </Link>
                     <p className="text-sm text-emerald-700">{proximityLabel(r)}</p>
                     <p className="text-sm text-zinc-500">
                       {years !== null && (years <= 0 ? "Habitant depuis moins d'un an" : `Habitant depuis ${years} an${years > 1 ? "s" : ""}`)}
@@ -189,6 +191,12 @@ async function Results({ searchParams }: { searchParams: Promise<Params> }) {
                     </li>
                   ))}
                 </ul>
+                <Link
+                  href={`/habitant/${r.resident_id}`}
+                  className="mt-3 inline-block text-sm font-medium text-emerald-700 underline"
+                >
+                  Voir le profil et réserver
+                </Link>
               </li>
             );
           })}

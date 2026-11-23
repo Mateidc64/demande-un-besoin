@@ -171,6 +171,12 @@ Règles d'accès déjà en place :
   n'apparaît pas dans les résultats.
 - Les offres sont lisibles par tous si l'habitant est vérifié, via la fonction `resident_is_verified()`
   (la table `residents` étant privée, une règle qui la lirait directement ne verrait rien).
+- Profil public : page `/habitant/[id]`, via `public_resident_profile(id)` (seulement les champs
+  publics, seulement si vérifié) et `reviews_for_profile(profile_id)`. Bouton « Signaler ce profil »
+  (table `reports`, connexion requise).
+- SQL envoyé à la conversation principale : **éviter les `drop`** (ils déclenchent une confirmation
+  bloquante). L'ancienne règle « offres actives des habitants vérifiés lisibles par tous » existe donc
+  encore dans la base à côté de la nouvelle ; c'est sans danger (les règles s'additionnent).
 - Suppression du compte : fonction `delete_my_account()` (chacun ne peut supprimer que le sien). Elle est
   refusée si des réservations ou des avis sont liés au compte : l'admin s'en occupe alors à la main.
 
@@ -243,8 +249,8 @@ Organisation du code :
 | 3 | Devenir habitant | Formulaire en étapes, envoi du justificatif, profil « en attente ». | ✅ |
 | 4 | Admin | Page admin pour valider ou refuser les habitants. | ✅ |
 | 5 | Offres et disponibilités | L'habitant crée ses offres, ses prix et ses créneaux. | ✅ |
-| 6 | Recherche | Autocomplétion d'adresse, carte + liste des habitants dans le rayon. | en cours |
-| 7 | Profil public | Page profil habitant avec offres et avis. | |
+| 6 | Recherche | Autocomplétion d'adresse, carte + liste des habitants dans le rayon. | ✅ |
+| 7 | Profil public | Page profil habitant avec offres et avis. | en cours |
 | 8 | Réservation | Choix du créneau, création de la réservation, tableau de bord habitant. | |
 | 9 | Paiement | Stripe Connect en mode test : paiement, versement, remboursement. | |
 | 10 | Avis et e-mails | Notes dans les deux sens, e-mails de confirmation, rappel, demande d'avis. | |
