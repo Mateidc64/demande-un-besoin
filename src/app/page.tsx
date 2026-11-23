@@ -2,10 +2,39 @@ import Link from "next/link";
 import { HomeSearch } from "@/components/home-search";
 import { StreetIllustration } from "@/components/street-illustration";
 
+// « Comment ça marche » en 3 étapes, avec un petit dessin au trait pour chacune.
 const steps = [
-  "Tu tapes l'adresse du logement qui t'intéresse.",
-  "Tu choisis un habitant vérifié et un créneau.",
-  "Vous parlez, tu décides en connaissance de cause.",
+  {
+    title: "Je cherche un quartier",
+    text: "Tape l'adresse du logement qui t'intéresse. Tu vois les habitants vérifiés à moins de 300 m, ceux du même immeuble et de la même rue en premier.",
+    icon: (
+      <>
+        <circle cx="11" cy="11" r="6" />
+        <path d="M15.5 15.5 L20 20" />
+      </>
+    ),
+  },
+  {
+    title: "Je réserve un habitant",
+    text: "Choisis un appel, une balade ou une visite du soir, puis un créneau. Tu paies en ligne : si l'habitant refuse ou annule, tu es remboursé.",
+    icon: (
+      <>
+        <rect x="4" y="5" width="16" height="15" rx="2" />
+        <path d="M4 10 H20 M9 3 V7 M15 3 V7" />
+        <path d="M9 15 L11 17 L15 13" />
+      </>
+    ),
+  },
+  {
+    title: "On échange",
+    text: "Tu poses toutes tes questions : bruit, voisins, copropriété, humidité. Tu décides en connaissance de cause, puis tu laisses un avis.",
+    icon: (
+      <>
+        <path d="M3 6 H14 V13 H8 L5 16 V13 H3 Z" />
+        <path d="M17 9 H21 V16 H19 V19 L16 16 H11 V15" />
+      </>
+    ),
+  },
 ];
 
 // Les 3 colonnes « pourquoi Demande à un voisin » : le problème du chercheur et notre solution.
@@ -60,7 +89,7 @@ export default function Home() {
           tout.
         </p>
 
-        <div className="mt-6">
+        <div id="recherche" className="mt-6 scroll-mt-24">
           <HomeSearch />
         </div>
         <p className="mt-2 text-sm text-ardoise">Une adresse précise ou simplement une rue, un quartier.</p>
@@ -92,22 +121,48 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="mt-14 w-full max-w-2xl">
-        <section>
-          <h2 className="text-xs font-bold uppercase tracking-wider text-ardoise">Comment ça marche</h2>
-          <ol className="mt-4 flex flex-col gap-3">
-            {steps.map((step, i) => (
-              <li key={step} className="flex items-center gap-3">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-voisin-pale font-extrabold text-action">
-                  {i + 1}
-                </span>
-                {step}
-              </li>
-            ))}
-          </ol>
-        </section>
+      <section id="comment-ca-marche" className="mt-16 w-full max-w-5xl" aria-labelledby="comment-titre">
+        <h2 id="comment-titre" className="text-center text-2xl font-extrabold sm:text-3xl">
+          Comment ça marche
+        </h2>
+        <p className="mt-2 text-center text-ardoise">Trois étapes, quelques minutes.</p>
+        <ol className="mt-8 grid gap-6 sm:grid-cols-3">
+          {steps.map((step, i) => (
+            <li key={step.title} className="relative rounded-2xl border border-brume bg-white p-6">
+              <span className="absolute -top-4 left-6 flex h-8 w-8 items-center justify-center rounded-full bg-action text-sm font-extrabold text-white">
+                {i + 1}
+              </span>
+              <svg
+                width="36"
+                height="36"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#F26A21"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+                className="mt-2"
+              >
+                {step.icon}
+              </svg>
+              <h3 className="mt-3 text-lg font-extrabold">{step.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-ardoise">{step.text}</p>
+            </li>
+          ))}
+        </ol>
+        <div className="mt-8 text-center">
+          <a
+            href="#recherche"
+            className="inline-block rounded-xl bg-action px-6 py-3 font-bold text-white hover:bg-action-survol"
+          >
+            Trouver un habitant près d&apos;une adresse
+          </a>
+        </div>
+      </section>
 
-        <div className="mt-10 rounded-2xl bg-nuit p-6 text-white">
+      <div className="mt-14 w-full max-w-2xl">
+        <div className="rounded-2xl bg-nuit p-6 text-white">
           <p className="text-lg font-bold">Tu habites un quartier recherché ?</p>
           <p className="mt-1 text-sm text-brume">
             Partage ce que tu sais et sois rémunéré pour chaque échange.
