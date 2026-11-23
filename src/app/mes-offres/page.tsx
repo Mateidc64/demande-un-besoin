@@ -1,4 +1,4 @@
-// Page /mes-offres : l'habitant choisit ses offres, ses prix et ses disponibilités.
+// Page /mes-offres (« Espace habitant ») : offres, prix, disponibilités et compte bancaire.
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -114,7 +114,13 @@ async function Content({ searchParams }: { searchParams: Promise<{ stripe?: stri
 export default function MesOffresPage({ searchParams }: PageProps<"/mes-offres">) {
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-12">
-      <h1 className="mb-8 text-2xl font-bold">Mes offres et disponibilités</h1>
+      <h1 className="mb-2 text-2xl font-bold">Espace habitant</h1>
+      <nav className="mb-8 flex flex-wrap gap-4 text-sm">
+        <span className="font-semibold text-emerald-700">Offres, créneaux et paiements</span>
+        <Link href="/mes-reservations" className="text-zinc-600 underline hover:text-zinc-900 dark:text-zinc-400">
+          Demandes reçues et gains
+        </Link>
+      </nav>
       <Suspense fallback={<p className="text-zinc-500">Chargement…</p>}>
         <Content searchParams={searchParams as Promise<{ stripe?: string; detail?: string }>} />
       </Suspense>

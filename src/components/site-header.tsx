@@ -1,4 +1,4 @@
-// Barre du haut du site : nom de l'app + lien « Se connecter » ou « Mon compte ».
+// Barre du haut du site : nom de l'app, « Habitant », « Mes réservations », « Se connecter » / « Mon compte ».
 import Link from "next/link";
 import { Suspense } from "react";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
@@ -11,6 +11,10 @@ async function AccountLink() {
   const loggedIn = Boolean(data?.claims);
   return (
     <div className="flex items-center gap-4">
+      {/* « Habitant » : devenir habitant, ou directement l'espace habitant si on est vérifié. */}
+      <Link href="/espace-habitant" className="text-sm font-medium hover:underline">
+        Habitant
+      </Link>
       {loggedIn && (
         <Link href="/mes-reservations" className="text-sm font-medium hover:underline">
           Mes réservations
