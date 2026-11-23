@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { formatDateTime } from "@/lib/dates";
 import { OFFERS, type OfferType } from "@/lib/offres";
 import { createClient } from "@/lib/supabase/server";
+import { ReviewForm } from "./review-form";
 import { cancelBooking, confirmDone, payBooking, reportProblem, respondToBooking } from "./actions";
 
 type Booking = {
@@ -56,7 +57,7 @@ function currentTime() {
 
 const BUTTON = "rounded-xl px-4 py-2 text-sm";
 
-function BookingCard({ b, now }: { b: Booking; now: number }) {
+function BookingCard({ b, now, reviewed }: { b: Booking; now: number; reviewed: boolean }) {
   const isWritten = b.offer_type === "question_ecrite";
   const status = statusOf(b);
   const isSeeker = b.my_role === "chercheur";
@@ -145,6 +146,8 @@ function BookingCard({ b, now }: { b: Booking; now: number }) {
           </form>
         )}
       </div>
+      {b.status === "terminee" && !reviewed && <ReviewForm bookingId={b.booking_id} otherName={b.other_first_name} />}
+      {b.status === "terminee" && reviewed && <p className="mt-3 text-sm text-ardoise">Avis envoyé ✅</p>}
     </li>
   );
 }
@@ -155,7 +158,14 @@ async function Content({ searchParams }: { searchParams: Promise<{ payee?: strin
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect("/connexion");
 
-  const { data } = await supabase.rpc("bookings_overview");
+  const [{ data }, { data: reviewedIds }] = await Promise.all([
+    supabase.rpc("bookings_overview"),
+    supabase.rpc("my_reviewed_bookings"),
+  ]);
+  // Liste d'identifiants (selon la version, chaque ligne est l'id seul ou { my_reviewed_bookings: id }).
+  const reviewed = new Set(
+    ((reviewedIds ?? []) as unknown[]).map((r) => (typeof r === "string" ? r : String(Object.values(r as object)[0]))),
+  );
   const now = currentTime();
   // Les demandes jamais payées (plus de 30 min) sont cachées : elles seront annulées automatiquement.
   const bookings = ((data ?? []) as Booking[]).filter(
@@ -201,7 +211,7 @@ async function Content({ searchParams }: { searchParams: Promise<{ payee?: strin
           </p>
           <ul className="flex flex-col gap-4">
             {asResident.map((b) => (
-              <BookingCard key={b.booking_id} b={b} now={now} />
+              <BookingCard key={b.booking_id} b={b} now={now} reviewed={reviewed.has(b.booking_id)} />
             ))}
           </ul>
         </section>
@@ -219,7 +229,7 @@ async function Content({ searchParams }: { searchParams: Promise<{ payee?: strin
         ) : (
           <ul className="flex flex-col gap-4">
             {asSeeker.map((b) => (
-              <BookingCard key={b.booking_id} b={b} now={now} />
+              <BookingCard key={b.booking_id} b={b} now={now} reviewed={reviewed.has(b.booking_id)} />
             ))}
           </ul>
         )}

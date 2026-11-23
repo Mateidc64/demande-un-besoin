@@ -4,6 +4,7 @@ import "server-only";
 import type Stripe from "stripe";
 import { OFFERS, type OfferType } from "@/lib/offres";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sendBookingEmails } from "@/lib/emails";
 import { getStripe, siteUrl } from "@/lib/stripe";
 import { createClient } from "@/lib/supabase/server";
 
@@ -84,6 +85,7 @@ export async function recordCheckout(session: Stripe.Checkout.Session) {
   });
   if (error) throw new Error(error.message);
   await runMoneyTasks();
+  await sendBookingEmails(bookingId, "paye");
   return true;
 }
 
