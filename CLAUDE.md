@@ -345,3 +345,7 @@ Facebook de quartier, bouche-à-oreille).
   plus un toutes les 30 min par conversation (`claim_conversation_email`). La première version
   (table `messages`, une conversation par réservation) n'est plus utilisée : elle reste en base, vide,
   sans accès (pas de DROP).
+
+- Recherche d'une rue **sans numéro** (ex. « avenue de la Californie ») : `search_residents` inclut
+  aussi tous les habitants de cette rue (même nom de rue, à moins de 5 km), car le point renvoyé par
+  le service d'adresses est le milieu de la rue, parfois à plus de 300 m des habitants.
