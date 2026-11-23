@@ -5,10 +5,11 @@ import { cookies } from "next/headers";
 import { supabaseAnonKey, supabaseUrl } from "./config";
 
 export async function createClient() {
+  // Lire les cookies en premier : ça indique à Next.js que la page dépend de la visite en cours.
+  const cookieStore = await cookies();
   if (!supabaseUrl || !supabaseAnonKey) {
     throw new Error("Supabase n'est pas configuré : remplis .env.local (voir .env.example).");
   }
-  const cookieStore = await cookies();
 
   return createServerClient(supabaseUrl, supabaseAnonKey, {
     cookies: {
